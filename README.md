@@ -33,6 +33,6 @@ Then use GNU stow to create symlinks
 $ stow .
 ```
 
-# YouTube Tutorial
+### YouTube Tutorial
 
 https://www.youtube.com/watch?v=y6XCebnB9gs
