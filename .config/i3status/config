@@ -1,0 +1,32 @@
+general {
+    output_format = "i3bar"
+    interval = 5
+}
+
+#order += "keyboard_layout"
+order += "wireless _first_"
+order += "memory"
+order += "volume master"
+order += "time"
+
+#keyboard_layout {
+#    format = " ⌨ %s"
+#}
+
+wireless _first_ {
+    format_up = "%essid %quality"
+    format_down = "down"
+}
+
+memory {
+    format = "%used"
+}
+
+time {
+    format = "%d/%m/%y %H:%M:%S"
+}
+
+volume master {
+	format = "♪: %volume"
+        device = "pulse"
+}
