@@ -1,6 +1,6 @@
 # My dotfiles
 
-This directory contains the dotfiles for my arch system with i3-wm
+This directory contains the dotfiles for my system
 
 ## Requirements
 
