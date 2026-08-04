@@ -7,9 +7,9 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
-# Running fastfetch on startup
-if [ -f /usr/bin/fastfetch ]; then
-	fastfetch
+# Running fetch on startup
+if [ -f /usr/bin/fetch ]; then
+	fetch
 fi
 
 # Created by `pipx` on 2026-05-12 14:43:12
