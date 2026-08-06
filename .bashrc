@@ -7,11 +7,6 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
-# Running fetch on startup
-if [ -f /usr/bin/fetch ]; then
-	fetch
-fi
-
 # Created by `pipx` on 2026-05-12 14:43:12
 export PATH="$PATH:/home/isarker/.local/bin"
 

@@ -1,3 +1,42 @@
+# Base16 oomox-Night Sky - alacritty color config
+# oomox-Night Sky
+
+[colors]
+draw_bold_text_with_bright_colors = false
+
+# Default colors
+[colors.primary]
+background = '0x1a1f4c'
+foreground = '0xd3dae3'
+
+# Colors the cursor will use if `custom_cursor_colors` is true
+[colors.cursor]
+text = '0x1a1f4c'
+cursor = '0xd3dae3'
+
+# Normal colors
+[colors.normal]
+black = '0x1a1f4c'
+red = '0xd46147'
+green = '0x3d9645'
+yellow = '0xebeb17'
+blue = '0x82a9de'
+magenta = '0x9a7ee5'
+cyan = '0x00a2a0'
+white = '0xd3dae3'
+
+# Bright colors
+[colors.bright]
+black = '0x767c97'
+red = '0xe5cd28'
+green = '0x06153b'
+yellow = '0x1b1847'
+blue = '0x2e3360'
+magenta = '0xedf1f7'
+cyan = '0xc88323'
+white = '0xd3dae3'
+
+# Fonts
 [font]
 size = 14.0
 

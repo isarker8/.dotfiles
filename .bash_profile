@@ -10,3 +10,6 @@ export VISUAL="vim"
 
 # Created by `pipx` on 2026-05-12 14:43:12
 export PATH="$PATH:/home/isarker/.local/bin"
+
+# Setting env variable for Qt
+export QT_QPA_PLATFORMTHEME="qt5ct"
