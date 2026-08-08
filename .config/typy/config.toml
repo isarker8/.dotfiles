@@ -1,0 +1,17 @@
+# ~/.config/typy/config.toml
+
+theme = "Tokyo Night"   # name of a built-in or custom theme (see Themes)
+cursor = "block"             # caret style (see Cursor)
+content = "words"            # "words" | "code" — what to type
+code_language = "any"        # code mode language: any | rust | python | go | c | cpp | javascript
+
+[modes]
+default_mode = "normal"      # "normal" | "uppercase" | "punctuation" | "numbers", or a combination e.g. "punctuation, numbers"
+uppercase_chance = "0.3"     # 0.0–1.0, clamped
+punctuation_chance = "0.5"   # 0.0–1.0, clamped
+
+[language]
+lang = "english"             # word list to use (see Language)
+
+[game]
+time = 30                    # default test duration in seconds
