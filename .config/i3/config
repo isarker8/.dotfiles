@@ -176,7 +176,7 @@ bindsym $mod+r mode "resize"
 
 
 #WALLPAPER
-exec_always --no-startup-id feh --bg-scale ~/Pictures/Wallpapers/arch.jpg
+exec_always --no-startup-id feh --bg-scale ~/Pictures/Wallpapers/catalina_wallpaper.jpg 
 
 #START CLIPBOARD
 exec_always copyq

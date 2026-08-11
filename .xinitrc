@@ -1,4 +1,7 @@
 picom -b &
 xrandr -s 1920x1080 &
 redshift &
-exec i3;
+/usr/bin/pipewire &
+/usr/bin/pipewire-pulse &
+/usr/bin/wireplumber &
+exec oxwm
