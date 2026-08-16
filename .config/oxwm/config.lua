@@ -355,6 +355,6 @@ oxwm.key.chord({
 -- Uncomment and modify these examples, or add your own
 
 -- oxwm.autostart("picom")
-oxwm.autostart("feh --bg-scale ~/Pictures/Wallpapers/catalina_wallpaper.jpeg")
+--oxwm.autostart("feh --bg-scale ~/Pictures/Wallpapers/catalina_wallpaper.jpeg")
 -- oxwm.autostart("dunst")
 -- oxwm.autostart("nm-applet")

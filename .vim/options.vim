@@ -1,5 +1,6 @@
 set number
 set relativenumber
+set termguicolors
 
 filetype plugin indent on
 set expandtab
@@ -11,5 +12,4 @@ set relativenumber
 set smartindent
 set showmatch
 set backspace=indent,eol,start
-syntax on
 

@@ -4,4 +4,6 @@ redshift &
 /usr/bin/pipewire &
 /usr/bin/pipewire-pulse &
 /usr/bin/wireplumber &
+wal -R
 exec oxwm
+#exec dwm
