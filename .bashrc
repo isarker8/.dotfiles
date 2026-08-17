@@ -24,3 +24,6 @@ source ~/.cache/wal/colors-tty.sh
 # Navigation Shortcuts
 alias ..="cd .."
 alias ...="cd ..."
+alias cdwm="cd ~/repos/Suckless/dwm; ls; git status"
+alias mdwm="cd ~/repos/Suckless/dwm; sudo make clean install;"
+

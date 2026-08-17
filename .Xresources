@@ -78,3 +78,8 @@ Xft.RGBA: rgb
 Xft.HintStyle: hintslight
 Xft.Antialias: 1
 
+! dwm configuration
+dwm.borderpx:      2
+dwm.snap:          32
+dwm.showbar:       1
+dwm.topbar:        1
