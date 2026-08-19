@@ -6,5 +6,4 @@ redshift &
 /usr/bin/wireplumber &
 wal -R &
 dwmblocks &
-#exec oxwm
 exec dwm
