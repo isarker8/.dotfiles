@@ -24,3 +24,6 @@ source ~/.cache/wal/colors-tty.sh
 # Navigation Shortcuts
 alias ..="cd .."
 alias ...="cd ..."
+
+# Cd Suckless
+alias cds="cd ~/repos/Suckless"
