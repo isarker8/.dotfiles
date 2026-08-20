@@ -1,11 +1,11 @@
 # Increase volume
-"amixer -M set Master 2%+ && pkill -RTMIN+10 dwmblocks"
+"amixer sset Master 2%+ && pkill -RTMIN+10 dwmblocks"
    XF86AudioRaiseVolume
 
 # Decrease volume
-"amixer -M set Master 2%- && pkill -RTMIN+10 dwmblocks"
+"amixer sset Master 2%- && pkill -RTMIN+10 dwmblocks"
    XF86AudioLowerVolume
 
 # Mute volume
-"amixer -M set Master toggle && pkill -RTMIN+10 dwmblocks"
+"amixer sset Master toggle && pkill -RTMIN+10 dwmblocks"
    XF86AudioMute
