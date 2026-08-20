@@ -1,0 +1,32 @@
+[global]
+    font = JetBrainsMono Nerd Font 11 
+    markup = full
+    format = "<b>%s</b>\n%b"
+    sort = yes
+    indicate_raw_markup = yes
+    alignment = left
+    bounce_freq = 0
+    show_indicators = yes
+    line_height = 0
+    separator_height = 2
+    padding = 8
+    horizontal_padding = 8
+    separator_color = frame
+    frame_width = 2
+    frame_color = "{color1}"
+
+[urgency_low]
+    background = "{background}"
+    foreground = "{foreground}"
+    timeout = 5
+
+[urgency_normal]
+    background = "{background}"
+    foreground = "{foreground}"
+    timeout = 10
+
+[urgency_critical]
+    background = "{background}"
+    foreground = "{color1}"
+    frame_color = "{color9}"
+    timeout = 0
