@@ -6,5 +6,6 @@ redshift &
 wal -R &
 prayer-times &
 xbindkeys &
+xrdb -merge ~/.Xresources &
 dwmblocks &
 exec dwm

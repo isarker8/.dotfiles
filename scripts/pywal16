@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# symlinking dunstrc
+ln -sf ~/.cache/wal/dunstrc ~/.config/dunst/dunstrc
+pkill dunst; setsid -f dunst
+
+# Reload Xresources database with pywal colors
+xrdb -merge ~/.cache/wal/colors.Xresources
+
+notify-send "Wallpaper and colourscheme changed"
+

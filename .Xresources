@@ -83,3 +83,11 @@ dwm.borderpx:      2
 dwm.snap:          32
 dwm.showbar:       1
 dwm.topbar:        1
+
+! Map pywal colors to dwm xrdb patch keys
+dwm.normbg: *background
+dwm.normfg: *foreground
+dwm.normborder: *.color8
+dwm.selbg: *.color2
+dwm.selfg: *foreground
+dwm.selborder: *foreground

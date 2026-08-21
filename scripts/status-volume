@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Check if muted
+muted=$(amixer -M get Master | grep -o '\[off\]' | head -n 1)
+
+if [ "$muted" = "[off]" ]; then
+    echo "󰝟"
+else
+    vol=$(amixer -M get Master | awk -F'[][]' '/Left:|Mono:/ { print $2; exit }')
+    echo "󰕾 $vol"
+fi
