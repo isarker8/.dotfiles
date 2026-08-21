@@ -11,7 +11,6 @@
     frame_width = 1
     frame_color="{color4}"
     font = JetBrainsMono Nerd Font 11
-    corner_radius = 1
     min_icon_size = 32
     max_icon_size = 32
     format = "<b>%s</b>\n%b"
