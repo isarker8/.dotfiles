@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+layout1="gb"
+layout2="ara"
+
+current=$(setxkbmap -query | awk '/^layout:/ {print $2}')
+
+if [ "$current" = "$layout1" ]; then
+    setxkbmap "$layout2"
+    notify-send "Keyboard Layout" "Arabic"
+else
+    setxkbmap "$layout1"
+    notify-send "Keyboard Layout" "English (Uk)"
+fi
+
+# Tell dwmblocks to refresh the keyboard layout block
+pkill -RTMIN+10 dwmblocks
