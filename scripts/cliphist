@@ -36,7 +36,7 @@ add() {
     # Also put it in the normal clipboard
     printf '%s' "$clip" | xclip -selection clipboard
 
-    notify-send "Clipboard" "Added to history"
+    notify-send "Clipboard" "$clip"
 }
 
 # Put the newest history item into the clipboard and paste it
