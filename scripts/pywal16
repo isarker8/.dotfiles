@@ -10,4 +10,3 @@ xrdb -merge ~/.cache/wal/colors.Xresources
 refresh # xrdb
 
 notify-send "Wallpaper and colourscheme changed"
-
