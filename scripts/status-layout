@@ -7,7 +7,7 @@ case "$layout" in
         printf "GB"
         ;;
     ara)
-        printf "AR"
+        printf "ةيبرعلا"
         ;;
     *)
         printf "%s" "$layout"

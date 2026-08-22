@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+histfile="$HOME/.cache/cliphist"
+placeholder="<NEWLINE>"
+
+mkdir -p "$(dirname "$histfile")"
+touch "$histfile"
+
+# Convert newlines to a single-line representation
+encode() {
+    sed ':a;N;$!ba;s/\n/'"$placeholder"'/g'
+}
+
+# Convert our representation back to real newlines
+decode() {
+    sed "s/$placeholder/\n/g"
+}
+
+# Add the current PRIMARY selection to the history
+add() {
+    local clip multiline
+
+    clip=$(xclip -o -selection primary 2>/dev/null) || exit 0
+    [ -z "$clip" ] && exit 0
+
+    multiline=$(printf '%s' "$clip" | encode)
+
+    # Remove duplicate if it already exists
+    grep -Fvx "$multiline" "$histfile" > "$histfile.tmp"
+
+    # Put it at the end = newest item
+    printf '%s\n' "$multiline" >> "$histfile.tmp"
+
+    mv "$histfile.tmp" "$histfile"
+
+    # Also put it in the normal clipboard
+    printf '%s' "$clip" | xclip -selection clipboard
+
+    notify-send "Clipboard" "Added to history"
+}
+
+# Put the newest history item into the clipboard and paste it
+top() {
+    local selection
+
+    selection=$(tail -n 1 "$histfile")
+    [ -z "$selection" ] && exit 0
+
+    printf '%s' "$selection" |
+        decode |
+        xclip -selection clipboard
+
+    xdotool key --clearmodifiers ctrl+v
+}
+
+# Show history, select one, move it to the newest position,
+# copy it to clipboard, and paste it.
+select_clip() {
+    local selection
+
+    selection=$(tac "$histfile" |
+        dmenu -b -i -l 5 -p "Clipboard history:")
+
+    [ -z "$selection" ] && exit 0
+
+    # Remove selected item from its old position
+    grep -Fvx "$selection" "$histfile" > "$histfile.tmp"
+
+    # Append it as the newest item
+    printf '%s\n' "$selection" >> "$histfile.tmp"
+
+    mv "$histfile.tmp" "$histfile"
+
+    # Copy selected item to clipboard
+    printf '%s' "$selection" |
+        decode |
+        xclip -selection clipboard
+
+    # Paste it
+    xdotool key --clearmodifiers ctrl+v
+}
+
+case "$1" in
+    add)
+        add
+        ;;
+    top)
+        top
+        ;;
+    sel)
+        select_clip
+        ;;
+    *)
+        printf '%s\n' \
+            "Usage: $0 {add|top|sel}" \
+            "" \
+            "add - add primary selection to clipboard history" \
+            "top - copy newest item and paste it" \
+            "sel - select history item, move it to top, and paste it"
+        ;;
+esac

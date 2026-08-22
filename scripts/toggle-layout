@@ -14,4 +14,4 @@ else
 fi
 
 # Tell dwmblocks to refresh the keyboard layout block
-pkill -RTMIN+10 dwmblocks
+pkill -RTMIN+11 dwmblocks

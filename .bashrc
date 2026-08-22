@@ -14,8 +14,8 @@ PROMPT="${NEWLINE}%K{$COL0}%F{$COL1}$(date +%_I:%M%P) %K{$COL0}%F{$COL2} %n %K{$
 
 echo -e "${NEWLINE}\x1b[38;5;137m\x1b[48;5;0m it's $(date +'%_I:%M%P') \x1b[38;5;180m\x1b[48;5;0m $(uptime -p | cut -c 4-) \x1b[38;5;223m\x1b[48;5;0m $(uname -r) \033[0m"
 
-
-
+# Reminders
+cat ~/reminders
 
 # Import colorscheme from 'wal' asynchronously
 # &   # Run the process in the background.
