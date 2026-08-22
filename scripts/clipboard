@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+histfile="$HOME/.cache/cliphist"
+placeholder="<NEWLINE>"
+
+mkdir -p "$(dirname "$histfile")"
+touch "$histfile"
+
+add_clipboard() {
+    local clip multiline
+
+    clip=$(xclip -o -selection clipboard 2>/dev/null) || exit 0
+    [ -z "$clip" ] && exit 0
+
+    # Replace newlines with a placeholder so each entry occupies one line
+    multiline=$(printf '%s' "$clip" | sed ":a;N;\$!ba;s/\n/$placeholder/g")
+
+    # Don't add duplicates
+    if ! grep -Fxq "$multiline" "$histfile"; then
+        printf '%s\n' "$multiline" >> "$histfile"
+    fi
+}
+
+select_clipboard() {
+    local selection decoded
+
+    selection=$(tac "$histfile" | dmenu -b -l 10 -i -p "Clipboard: ") || exit 0
+    [ -z "$selection" ] && exit 0
+
+    # Restore newlines
+    decoded="${selection//$placeholder/$'\n'}"
+
+    # Put selected item into the clipboard
+    printf '%s' "$decoded" | xclip -selection clipboard
+
+    # Remove it from its old position, then append it to the end
+    # so it appears at the top of the dmenu list next time.
+    grep -Fvx "$selection" "$histfile" > "$histfile.tmp"
+    printf '%s\n' "$selection" >> "$histfile.tmp"
+    mv "$histfile.tmp" "$histfile"
+}
+
+case "$1" in
+    add)
+        add_clipboard
+        ;;
+    sel)
+        select_clipboard
+        ;;
+    *)
+        printf '%s\n' \
+            "Usage: $0 {add|sel}" \
+            "" \
+            "add  - add current clipboard contents to history" \
+            "sel  - select clipboard history with dmenu"
+        ;;
+esac
