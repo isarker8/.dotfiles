@@ -1,0 +1,13 @@
+dwm.normbordercolor: {color0}
+dwm.normbgcolor:     {background}
+dwm.normfgcolor:     {foreground}
+dwm.selbordercolor:  {color4}
+dwm.selbgcolor:      {color4}
+dwm.selfgcolor:      {color15}
+
+dmenu.background:     {background}
+dmenu.foreground:     {foreground}
+dmenu.backgroundSel:  {color4}
+dmenu.foregroundSel:  {color15}
+dmenu.backgroundOut:  {background}
+dmenu.foregroundOut:  {color4}

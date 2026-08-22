@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export DISPLAY="${DISPLAY:-:0}"
+
+# Dependencies check
+for cmd in xclip import notify-send dmenu; do command -v "$cmd" &>/dev/null || { echo "Missing: $cmd" >&2; exit 1; }; done
+
+OUTDIR="${2:-$HOME/Pictures/screenshots}"; mkdir -p "$OUTDIR"
+FILE="$OUTDIR/$(date +%Y"/"%m"/"%d_%H":"%M":"%S).png"
+TMP=$(mktemp --suffix=.png); trap 'rm -f "$TMP"' EXIT
+
+show_help(){ 
+    cat <<EOF
+Usage: $0 [color|full|window|selection] [output_dir]
+If run without arguments, it opens a dmenu prompt.
+EOF
+}
+
+post(){ 
+    xclip -selection clipboard -t image/png -i "$FILE" && notify-send -i "$FILE" "Screenshot: $(basename "$FILE")"
+    command -v imgcliphist &>/dev/null && imgcliphist add
+}
+
+colorpicker(){ 
+    command -v magick &>/dev/null || { notify-send "Missing: magick"; exit 1; }
+    if command -v slop &>/dev/null; then
+        import -window root -crop "$(slop --tolerance=0 || exit 1)" "$TMP"
+    else
+        import "$TMP"
+    fi
+    hex=$(magick "$TMP" -scale 1x1\! -format "#%[hex:p{0,0}]" info: 2>/dev/null || echo "#??????")
+    echo "$hex" | xclip -selection clipboard -i && notify-send -i "$TMP" "Color: $hex"
+}
+
+capture_full(){ 
+    import -window root "$FILE" && post
+}
+
+capture_window(){ 
+    command -v xdotool &>/dev/null || { echo "Missing: xdotool" >&2; exit 1; }
+    import -window "$(xdotool getwindowfocus -f)" "$FILE" && post
+}
+
+capture_selection(){ 
+    if command -v slop &>/dev/null; then
+        import -window root -crop "$(slop --tolerance=0 || exit 1)" "$FILE" && post
+    else
+        import "$FILE" && post
+    fi
+}
+
+main(){ 
+    # If no argument is passed, use dmenu to choose
+    if [ $# -eq 0 ]; then
+        choice=$(printf "full\nwindow\nselection\ncolor" | dmenu -i -c -l 4 -p "Screenshot mode:")
+        [ -z "$choice" ] && exit 0
+        sleep 0.3
+        set -- "$choice"
+    fi
+
+    case "${1:-}" in
+        -h|--help) show_help ;;
+        color*)    colorpicker ;;
+        full)      capture_full ;;
+        window)    capture_window ;;
+        selection) capture_selection ;;
+        *)         capture_selection ;;
+    esac
+}
+
+main "$@"

@@ -7,5 +7,7 @@ pkill dunst; setsid -f dunst
 # Reload Xresources database with pywal colors
 xrdb -merge ~/.cache/wal/colors.Xresources
 
+refresh # xrdb
+
 notify-send "Wallpaper and colourscheme changed"
 

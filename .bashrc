@@ -21,9 +21,15 @@ source ~/.cache/wal/colors-tty.sh
 
 ## ALIASES
 
+# Safety
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+# -> Prevents accidentally clobbering files.
+alias mkdir='mkdir -p'
+
 # Navigation Shortcuts
 alias ..="cd .."
-alias ...="cd ..."
 
 # Cd Suckless
 alias cds="cd ~/repos/Suckless"
