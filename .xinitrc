@@ -7,5 +7,6 @@ wal -R &
 prayer-times daemon &
 xbindkeys &
 xrdb -merge ~/.Xresources &
+clipmenud &
 dwmblocks &
 exec dwm
