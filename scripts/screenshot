@@ -6,7 +6,7 @@ export DISPLAY="${DISPLAY:-:0}"
 for cmd in xclip import notify-send dmenu; do command -v "$cmd" &>/dev/null || { echo "Missing: $cmd" >&2; exit 1; }; done
 
 OUTDIR="${2:-$HOME/Pictures/screenshots}"; mkdir -p "$OUTDIR"
-FILE="$OUTDIR/$(date +%Y"/"%m"/"%d_%H":"%M":"%S).png"
+FILE="$OUTDIR/$(date +%Y"-"%m"-"%d_%H":"%M":"%S).png"
 TMP=$(mktemp --suffix=.png); trap 'rm -f "$TMP"' EXIT
 
 show_help(){ 
@@ -29,7 +29,6 @@ colorpicker(){
         import "$TMP"
     fi
     hex=$(magick "$TMP" -scale 1x1\! -format "#%[hex:p{0,0}]" info: 2>/dev/null || echo "#??????")
-#    echo "$hex" | xclip -selection clipboard -i && notify-send -i "$TMP" "Color: $hex"
     echo "$hex" | xclip -selection clipboard -i && notify-send -i "$TMP" "Color: $hex"
 }
 
