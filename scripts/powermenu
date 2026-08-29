@@ -9,10 +9,10 @@ choice=$(printf '%s\n' \
 
 case "$choice" in
     "Shutdown")
-        shutdown -h now
+        loginctl poweroff 
         ;;
     "Restart")
-        reboot
+        loginctl reboot
         ;;
     "Lock")
         slock
