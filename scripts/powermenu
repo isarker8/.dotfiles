@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+choice=$(printf '%s\n' \
+    "Shutdown" \
+    "Restart" \
+    "Lock" \
+    "Sleep" |
+    dmenu -c -i -l 4 -p "Power:")
+
+case "$choice" in
+    "Shutdown")
+        shutdown -h now
+        ;;
+    "Restart")
+        reboot
+        ;;
+    "Lock")
+        slock
+        ;;
+    "Sleep")
+        loginctl suspend
+        ;;
+esac

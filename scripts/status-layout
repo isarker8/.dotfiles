@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-layout=$(setxkbmap -query | awk '/^layout:/ {print $2}')
+statefile="$HOME/.cache/current-layout"
 
-case "$layout" in
+case "$(cat "$statefile" 2>/dev/null)" in
     gb)
         printf "GB"
         ;;
     ara)
-        printf "ةيبرعلا"
+        printf "AR"
         ;;
     *)
-        printf "%s" "$layout"
+        printf "??"
         ;;
 esac

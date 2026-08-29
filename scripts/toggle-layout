@@ -1,17 +1,31 @@
 #!/usr/bin/env bash
 
 layout1="gb"
-layout2="ara"
+name1="GB"
 
-current=$(setxkbmap -query | awk '/^layout:/ {print $2}')
+layout2="ara"
+name2="AR"
+
+statefile="$HOME/.cache/current-layout"
+
+mkdir -p "$HOME/.cache"
+
+# Initialise state to layout1 if it doesn't exist
+if [ ! -f "$statefile" ]; then
+    printf '%s\n' "$layout1" > "$statefile"
+fi
+
+current=$(cat "$statefile")
 
 if [ "$current" = "$layout1" ]; then
     setxkbmap "$layout2"
-    notify-send "Keyboard Layout" "Arabic"
+    printf '%s\n' "$layout2" > "$statefile"
+    notify-send "Keyboard Layout" "$name2"
 else
     setxkbmap "$layout1"
-    notify-send "Keyboard Layout" "English (Uk)"
+    printf '%s\n' "$layout1" > "$statefile"
+    notify-send "Keyboard Layout" "$name1"
 fi
 
-# Tell dwmblocks to refresh the keyboard layout block
+# Telling dwmblocks to refresh
 pkill -RTMIN+11 dwmblocks
