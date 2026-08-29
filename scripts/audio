@@ -4,19 +4,19 @@
 
 headphones () { \
   pacmd set-default-sink "bluez_sink.2C_FD_B3_D8_69_50.a2dp_sink" &
-  notify-send  -h string:bgcolor:#a3be8c "Audio switched to headphones!"
+  notify-send  -h string:bgcolor:#a3be8c "Audio switched to Headphones"
 }
 
 speakers () { \
   pacmd set-default-sink "alsa_output.pci-0000_04_00.6.analog-stereo" &
-  notify-send  -h string:bgcolor:#bf616a "Audio switched to speakers!"
+  notify-send  -h string:bgcolor:#bf616a "Audio switched to Speakers"
 }
 
 choosespeakers() { \
-  choice=$(printf "Headphones\\nSpeakers" | dmenu -c -l 2 -i -p "Choose output: ")
+  choice=$(printf "󰥰 Headphones\\n󰓃 Speakers" | dmenu -c -l 2 -i -p "Audio output:")
   case "$choice" in
-    Headphones) headphones;;
-    Speakers) speakers;;
+    "󰥰 Headphones") headphones;;
+    "󰓃 Speakers") speakers;;
   esac
 }
 
