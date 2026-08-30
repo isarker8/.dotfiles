@@ -5,14 +5,11 @@
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
-# PS1='[\u@\h \W]\$ '
 
 # Import pywal colors if the cache file exists
 [ -f ~/.cache/wal/colors.sh ] && source ~/.cache/wal/colors.sh 
 NEWLINE=$'\n'
-PROMPT="${NEWLINE}%K{$COL0}%F{$COL1}$(date +%_I:%M%P) %K{$COL0}%F{$COL2} %n %K{$COL3} %~ %f%k ❯ " # pywal colors, from postrun script
-
-echo -e "${NEWLINE}\x1b[38;5;137m\x1b[48;5;0m it's $(date +'%_I:%M%P') \x1b[38;5;180m\x1b[48;5;0m $(uptime -p | cut -c 4-) \x1b[38;5;223m\x1b[48;5;0m $(uname -r) \033[0m"
+PS1='${NEWLINE}\[\e[48;5;0m\e[38;5;6m\]$(date +%_I:%M%P) \[\e[38;5;14m\]\u \[\e[38;5;6m\]\w \[\e[0m\]${NEWLINE}\[\e[1;36m\]❯ \[\e[0m\]'
 
 # Reminders
 cat ~/reminders
