@@ -1,23 +1,17 @@
-#!/usr/bin/env bash
-# Set audio sinks before using!
-# `pactl list sinks` if on pulseaudio.
+#!/bin/sh
 
-headphones () { \
-  pacmd set-default-sink "bluez_sink.2C_FD_B3_D8_69_50.a2dp_sink" &
-  notify-send  -h string:bgcolor:#a3be8c "Audio switched to Headphones"
-}
+# Create a list of sinks with pretty names
+options=$(pactl -f json list sinks | jq -r '.[] | .description')
 
-speakers () { \
-  pacmd set-default-sink "alsa_output.pci-0000_04_00.6.analog-stereo" &
-  notify-send  -h string:bgcolor:#bf616a "Audio switched to Speakers"
-}
+# Let the user select a description
+selection=$(echo "$options" | dmenu -i -l 5 -c -p "Output:")
 
-choosespeakers() { \
-  choice=$(printf "󰥰 Headphones\\n󰓃 Speakers" | dmenu -c -l 2 -i -p "Audio output:")
-  case "$choice" in
-    "󰥰 Headphones") headphones;;
-    "󰓃 Speakers") speakers;;
-  esac
-}
+# Extract the corresponding sink name
+sink_name=$(pactl -f json list sinks | jq -r --arg sink_pretty_name "$selection" '.[] | select(.description == $sink_pretty_name) | .name')
 
-choosespeakers
+# Set the selected sink as default
+if [ -n "$sink_name" ]; then
+    pactl set-default-sink "$sink_name" && notify-send "Audio switched to: $selection"
+else
+    notify-send "Audio switch failed"
+fi

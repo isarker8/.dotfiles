@@ -1,0 +1,144 @@
+@import url('file:///home/isarker/.cache/wal/colors.css');
+
+:root {
+  /* semantic alias so you only pick an accent once */
+  --wal-accent: var(--color8);
+}
+
+/* ---------- Toolbox / nav-bar ---------- */
+#navigator-toolbox,
+#TabsToolbar,
+#PersonalToolbar {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+#nav-bar {
+  /* tint the wallpaper with --background so contrast stays
+     consistent no matter which image wal picks */
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--background) 55%, transparent),
+      color-mix(in srgb, var(--background) 55%, transparent)
+    ),
+    var(--wallpaper);
+  background-size: cover;
+  background-position: center;
+  color: var(--foreground) !important;
+}
+
+/* ---------- Tabs ---------- */
+.tab-background {
+  background-color: var(--background) !important;
+}
+.tabbrowser-tab[selected="true"] .tab-background {
+  background-color: var(--color1) !important;
+}
+.tabbrowser-tab:hover .tab-background {
+  background-color: var(--color0) !important;
+}
+.tab-line[selected="true"] {
+  background-color: var(--wal-accent) !important;
+}
+.tabbrowser-tab .tab-label {
+  color: var(--foreground) !important;
+}
+
+/* ---------- URL bar ---------- */
+#urlbar-background {
+  background-color: var(--color0) !important;
+  border-color: var(--color1) !important;
+}
+#urlbar[focused="true"] > #urlbar-background {
+  border-color: var(--wal-accent) !important;
+}
+#urlbar,
+#urlbar-input {
+  color: var(--foreground) !important;
+}
+
+/* Urlbar results / autocomplete panel */
+.urlbarView,
+.urlbarView-body-inner {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+.urlbarView-row[selected] {
+  background-color: var(--color1) !important;
+}
+
+/* ---------- Panels & menus (hamburger, right-click, etc) ---------- */
+menupopup,
+panel {
+  --panel-background: var(--background);
+  --panel-color: var(--foreground);
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+menuitem,
+menu,
+.subviewbutton {
+  /* kill Firefox's own hover/active transition so its native highlight
+     colour can't fade through before ours applies */
+  transition: none !important;
+}
+menuitem:hover,
+menuitem[_moz-menuactive="true"],
+menu:hover,
+menu[_moz-menuactive="true"],
+.subviewbutton:hover {
+  background-color: var(--color1) !important;
+  color: var(--foreground) !important;
+}
+
+/* ---------- Sidebar ---------- */
+#sidebar-box,
+#sidebar-header {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* ---------- Vertical tabs sidebar (wallpaper effect) ---------- */
+/* #sidebar-main is the native vertical-tabs rail itself - separate from
+   #sidebar-box above, which is the flyout panel for Bookmarks/History/etc.
+   Same recipe as #nav-bar: tint --wallpaper with --background so it stays
+   readable no matter which image wal picks. */
+#sidebar-main {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--background) 55%, transparent),
+      color-mix(in srgb, var(--background) 55%, transparent)
+    ),
+    var(--wallpaper) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  color: var(--foreground) !important;
+}
+
+/* #vertical-tabs is the tab list living inside #sidebar-main. Its default
+   tab background is forced transparent (scoped here, so the horizontal
+   strip above is untouched) so the wallpaper shows through behind
+   unselected tabs, the same way it shows through the padding of #nav-bar.
+   Selected/hover are re-declared at the same #vertical-tabs specificity
+   so they still win over the transparent default. */
+#vertical-tabs,
+#vertical-tabs .tab-background {
+  background-color: transparent !important;
+}
+#vertical-tabs .tabbrowser-tab[selected="true"] .tab-background {
+  background-color: var(--color1) !important;
+}
+#vertical-tabs .tabbrowser-tab:hover .tab-background {
+  background-color: var(--color0) !important;
+}
+
+/* ---------- Find bar ---------- */
+#findbar {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* ---------- Chrome scrollbars ---------- */
+* {
+  scrollbar-color: var(--color1) var(--background);
+}
