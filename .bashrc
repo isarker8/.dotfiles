@@ -32,7 +32,7 @@ source ~/.cache/wal/colors-tty.sh
 ## ALIASES
 
 # Safety
-alias rm='rm -i'
+alias rm='trash-put'
 alias cp='cp -i'
 alias mv='mv -i'
 # -> Prevents accidentally clobbering files.
