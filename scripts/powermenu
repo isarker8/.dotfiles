@@ -5,7 +5,7 @@ choice=$(printf '%s\n' \
     " Restart" \
     " Lock" \
     "󰤄 Sleep" |
-    dmenu -c -i -l 4 -p "Power:")
+    dmenu -c -bw 3 -i -l 4 -p "Power:")
 
 case "$choice" in
     "󰐥 Shutdown")

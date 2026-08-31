@@ -7,13 +7,13 @@
 # Setting default programs
 export EDITOR="vim"
 export VISUAL="vim"
-export TERM="st"
-export TERMINAL="st"
+export TERM="alacritty"
+export TERMINAL="alacritty"
 export BROWSER="waterfox"
 export BROWSER2="helium"
 
 # add scripts to path
-export PATH="$XDG_CONFIG_HOME/scripts:$PATH"
+export PATH="/home/isarker/dotfiles/scripts:$PATH"
 
 # Created by `pipx` on 2026-05-12 14:43:12
 export PATH="$PATH:/home/isarker/.local/bin"

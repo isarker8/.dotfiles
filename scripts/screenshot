@@ -52,7 +52,7 @@ capture_selection(){
 main(){ 
     # If no argument is passed, use dmenu to choose
     if [ $# -eq 0 ]; then
-        choice=$(printf " full\n󱣴 window\n󰩭 selection\n󰴱 color" | dmenu -i -c -l 4 -p "Screenshot mode:")
+        choice=$(printf " full\n󱣴 window\n󰩭 selection\n󰴱 color" | dmenu -i -bw 3 -c -l 4 -p "Screenshot mode:")
         [ -z "$choice" ] && exit 0
         sleep 0.3
         set -- "$choice"

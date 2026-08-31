@@ -1,0 +1,73 @@
+# Homepage that vimb opens if started without a URI.
+set home-page=about:blank
+
+# Path to the default download directory. If no download directory is set,
+# download will be written into current directory. The following pattern will
+# be expanded if the download is started '~/', '~user', '$VAR' and '${VAR}'.
+set download-path=/home/isarker/Downloads/
+
+# Command with placeholder '%s' called if form field is opened with $EDITOR to
+# spawn the editor-like `x-terminal-emulator -e vim %s'. To use Gvim as the
+# editor, it's necessary to call it with `-f' to run it in the foreground.
+set editor-command=termite -e "vim %s"
+
+# If enabled the inputbox will be hidden whenever it contains no text.
+set input-autohide=true
+
+# Enable or disable the spell checking feature.
+set spell-checking=true
+
+# Set comma separated list of spell checking languages to be used for
+# spell checking.
+set spell-checking-languages=en
+
+# Enable or disable support for WebGL on pages.
+set webgl=true
+
+# While typing a search command, show where the pattern typed so far matches.
+set incsearch=true
+
+# Web Content Font Settings
+set default-font=JetBrainsMono Nerd Font
+set monospace-font=JetBrainsMono Nerd Font
+set sans-serif-font=DejaVu Sans
+set serif-font=DejaVu Serif
+
+# Font Sizes
+set font-size=17
+set monospace-font-size=15
+set default-zoom=120
+
+# Shortcuts
+shortcut-add duck=https://duckduckgo.com/?q=$0
+shortcut-add d=http://dict.cc/?s=$0
+shortcut-add g=https://www.google.com/search?q=$0
+shortcut-add y=https://www.youtube.com/results?search_query=$0
+shortcut-add s=https://www.startpage.com/do/dsearch?query=$0
+
+# MPV Video Launch Shortcut
+shortcut-add mpv=shellcmd! mpv "$VIMB_URI"
+
+# Set default search engine
+shortcut-default duck
+
+# Keybindings
+nmap + zI
+nmap - zO
+nmap = zz
+
+# Press 'Y' to play current page/video directly in MPV without ads
+nmap Y=mpv
+
+# GUI Color Settings & Pywal-style Dark Palette
+# Uses JetBrainsMono Nerd Font at 15pt for all UI elements
+set completion-css=color:#d8dee9;background-color:#1e1e2e;font:15pt "JetBrainsMono Nerd Font";
+set completion-hover-css=color:#d8dee9;background-color:#313244;font:15pt "JetBrainsMono Nerd Font";
+set completion-selected-css=color:#cdd6f4;background-color:#45475a;font:15pt "JetBrainsMono Nerd Font";
+
+set input-css=color:#cdd6f4;background-color:#181825;font:15pt "JetBrainsMono Nerd Font";
+set input-error-css=color:#f38ba8;background-color:#181825;font:15pt "JetBrainsMono Nerd Font";
+
+set status-css=color:#f9e2af;background-color:#181825;font:15pt "JetBrainsMono Nerd Font";
+set status-ssl-css=color:#a6e3a1;background-color:#181825;font:15pt "JetBrainsMono Nerd Font";
+set status-ssl-invalid-css=color:#f38ba8;background-color:#181825;font:15pt "JetBrainsMono Nerd Font";

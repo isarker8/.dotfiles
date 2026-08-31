@@ -3,7 +3,7 @@
 # Create a list of sinks with pretty names
 options=$(pactl -f json list sinks | jq -r '.[] | .description')
 # Let the user select a description
-selection=$(echo "$options" | dmenu -i -l 5 -c -p "Output:")
+selection=$(echo "$options" | dmenu -i -bw 3 -l 5 -c -p "Output:")
 
 # Escape or empty selection: quit quietly, no notification
 [ -n "$selection" ] || exit 0

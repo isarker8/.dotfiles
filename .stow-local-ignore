@@ -1,5 +1,8 @@
 README.md
 \.vim/plugged
-chrome
+\.git
+\.gitignore
 \.netrwhist
-scripts
+^/scripts
+^/chrome
+\.config/bookmarks
