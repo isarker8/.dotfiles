@@ -34,7 +34,7 @@ bmks_add() {
 	printf "Description: "
 	read description
 	[ -z "$description" ] && echo "$url" >> $URL_FILE_PATH/$URL_FILE_NAME
-	[ -n "$description" ] && echo "$description - $url" >> $URL_FILE_PATH/$URL_FILE_NAME
+	[ -n "$description" ] && echo "$description :: $url" >> $URL_FILE_PATH/$URL_FILE_NAME
 }
 
 bmks_ls() {
@@ -63,8 +63,8 @@ bmks_display() {
 	bmks_check
 	local lines=$(bmks_lines)
 	case $PREFERED_LAUNCHER in
-		dmenu) cat $URL_FILE_PATH/$URL_FILE_NAME | sort | dmenu -l $lines -c -bw 3 -g 2 -i -F -p '󰃀 Bookmark:'| awk '{print $(NF)}' | xargs -I '{}' $BROWSER {} ;;
-		fzf) cat $URL_FILE_PATH/$URL_FILE_NAME | sort | fzf | awk '{print $(NF)}' | xargs -I '{}' $BROWSER {} ;;
+		dmenu) cat $URL_FILE_PATH/$URL_FILE_NAME | sort | dmenu -l $lines -c -bw 3 -g 2 -i -F -p '󰃀 Bookmark:'| awk -F' :: ' '{print $NF}' | xargs -I '{}' $BROWSER {} ;;
+		fzf) cat $URL_FILE_PATH/$URL_FILE_NAME | sort | fzf | awk -F' :: ' '{print $NF}' | xargs -I '{}' $BROWSER {} ;;
 	esac
 }
 
