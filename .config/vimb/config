@@ -5,6 +5,10 @@ set home-page=file:///home/isarker/dotfiles/startpage.html
 # allowing local file importing
 set allow-file-access-from-file-urls=on
 
+set scripts=on
+set user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36
+set html5-local-storage=on
+
 # Set dark-mode
 set dark-mode=on
 

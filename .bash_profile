@@ -9,8 +9,7 @@ export EDITOR="vim"
 export VISUAL="vim"
 export TERM="alacritty"
 export TERMINAL="alacritty"
-export BROWSER="waterfox"
-export BROWSER2="helium"
+export BROWSER="vimb"
 
 # add scripts to path
 export PATH="/home/isarker/dotfiles/scripts:$PATH"
