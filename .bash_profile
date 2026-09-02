@@ -11,9 +11,6 @@ export TERM="alacritty"
 export TERMINAL="alacritty"
 export BROWSER="vimb"
 
-# add scripts to path
-export PATH="/home/isarker/.dotfiles/scripts:$PATH"
-
 # Created by `pipx` on 2026-05-12 14:43:12
 export PATH="$PATH:/home/isarker/.local/bin"
 
