@@ -1,43 +1,16 @@
 #!/bin/sh
 
-# File to track toggle state (0 = Hijri, 1 = Gregorian)
-STATE_FILE="/tmp/dwmblocks_date_state"
-
-# Toggle state on left-click (BLOCK_BUTTON=1 in dwmblocks-async)
-if [ "$BLOCK_BUTTON" -eq 1 ]; then
-    if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" -eq 1 ]; then
-        echo 0 > "$STATE_FILE"
-    else
-        echo 1 > "$STATE_FILE"
-    fi
-fi
-
+STATE_FILE=/tmp/dwmblocks_date_state
 STATE=$(cat "$STATE_FILE" 2>/dev/null || echo 0)
 
-# Function to convert Western digits to Eastern Indo-Arabic digits
-to_indo_arabic() {
-    echo "$1" | tr '0123456789' '٠١٢٣٤٥٦٧٨٩'
-}
+# Left click toggles Hijri (0) / Gregorian (1)
+if [ "$BLOCK_BUTTON" = 1 ]; then
+    STATE=$((1 - STATE))
+    echo "$STATE" > "$STATE_FILE"
+fi
 
-# Format 24-hour time in Indo-Arabic numerals
-RAW_TIME=$(date +"%H:%M")
-TIME=$(to_indo_arabic "$RAW_TIME")
-
-if [ "$STATE" -eq 1 ]; then
-    # Gregorian Output in Arabic
-    RAW_DAY_NUM=$(date +"%d")
-    RAW_YEAR=$(date +"%Y")
-    
-    DAY_NUM=$(to_indo_arabic "$RAW_DAY_NUM")
-    YEAR=$(to_indo_arabic "$RAW_YEAR")
-    
-    DAY_NAME=$(LC_TIME=ar_SA.UTF-8 date +"%A")
-    MONTH_NAME=$(LC_TIME=ar_SA.UTF-8 date +"%B")
-    
-    GREG_DATE="$DAY_NAME $DAY_NUM $MONTH_NAME $YEAR"
-    echo "$TIME | $GREG_DATE"
+if [ "$STATE" = 1 ]; then
+    get_hijri g
 else
-    # Hijri Output via the external Python script
-    HIJRI_DATE=get_hijri
-    echo "$TIME | $HIJRI_DATE"
+    get_hijri
 fi

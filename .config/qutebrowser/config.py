@@ -77,6 +77,7 @@ c.colors.webpage.bg = bg_color
 
 c.url.start_pages = ["file:///home/isarker/.dotfiles/start.html"]
 c.url.default_page = "file:///home/isarker/.dotfiles/start.html"
+c.content.local_content_can_access_remote_urls = True
 
 c.tabs.title.format = "{audio}{current_title}"
 c.fonts.web.size.default = 20
@@ -98,7 +99,6 @@ c.auto_save.session = True # save tabs on quit/restart
 config.bind('o', 'cmd-set-text -s :open')
 config.bind('h', 'history')
 config.bind('cc', 'hint images spawn sh -c "cliphist link {hint-url}"')
-config.bind('cs', 'cmd-set-text -s :config-source')
 config.bind('T', 'hint links tab')
 config.bind('pP', 'open -- {primary}')
 config.bind('pp', 'open -- {clipboard}')
@@ -125,7 +125,7 @@ config.set('colors.webpage.darkmode.enabled', False, 'file://*')
 # c.content.user_stylesheets = ["~/.config/qutebrowser/styles/youtube-tweaks.css"]
 c.tabs.padding = {'top': 5, 'bottom': 5, 'left': 9, 'right': 9}
 c.tabs.indicator.width = 0 # no tab indicators
-# c.window.transparent = True # apparently not needed
+c.window.transparent = True
 c.tabs.width = '7%'
 
 # fonts

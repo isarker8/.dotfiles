@@ -1,37 +1,33 @@
 #!/usr/bin/env python3
 
+import sys
 from datetime import datetime
 import arabic_reshaper
 from bidi.algorithm import get_display
 from hijri_converter import Gregorian
 
-MONTHS = [
-    'محرم',
-    'صفر',
-    'ربيع الأول',
-    'ربيع الثاني',
-    'جمادى الأولى',
-    'جمادى الآخرة',
-    'رجب',
-    'شعبان',
-    'رمضان',
-    'شوال',
-    'ذو القعدة',
-    'ذو الحجة',
+HIJRI_MONTHS = [
+    'محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الآخرة',
+    'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة',
 ]
+GREG_MONTHS = [
+    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
+]
+DAYS = ['الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد']
 
+TRANS = str.maketrans('0123456789', '٠١٢٣٤٥٦٧٨٩')
 now = datetime.now()
-h = Gregorian(now.year, now.month, now.day).to_hijri()
+time_str = now.strftime('%H:%M').translate(TRANS)
 
-# Translate Western digits to Eastern Indo-Arabic digits
-trans = str.maketrans('0123456789', '٠١٢٣٤٥٦٧٨٩')
-day_str = str(h.day).translate(trans)
-year_str = str(h.year).translate(trans)
-
-raw_text = f'{day_str} {MONTHS[h.month - 1]} {year_str}هـ'
+if len(sys.argv) > 1 and sys.argv[1] == 'g':
+    raw = (f'{DAYS[now.weekday()]} {str(now.day).translate(TRANS)} '
+           f'{GREG_MONTHS[now.month - 1]} {str(now.year).translate(TRANS)}')
+else:
+    h = Gregorian(now.year, now.month, now.day).to_hijri()
+    raw = (f'{str(h.day).translate(TRANS)} {HIJRI_MONTHS[h.month - 1]} '
+           f'{str(h.year).translate(TRANS)}هـ')
 
 # Reshape joining letters and apply BiDi reordering for non-bidi bars
-reshaped_text = arabic_reshaper.reshape(raw_text)
-bidi_text = get_display(reshaped_text)
-
-print(bidi_text)
+date_str = get_display(arabic_reshaper.reshape(raw))
+print(f'{time_str} | {date_str}')
