@@ -44,7 +44,7 @@ set spell-checking=true
 
 # Set comma separated list of spell checking languages to be used for
 # spell checking.
-set spell-checking-languages=en
+set spell-checking-languages=en_GB
 
 # Enable or disable support for WebGL on pages.
 set webgl=true
@@ -69,8 +69,11 @@ shortcut-add g=https://www.google.com/search?q=$0
 shortcut-add y=https://www.youtube.com/results?search_query=$0
 shortcut-add aw=https://wiki.archlinux.org/index.php?search=$0
 
-# using ;x will hint and pipe the URI into mpv
-set x-hint-command=:sh! mpv '<C-R>;'
+# using ;v/a/V/A for media using mpv viewing (lowercase)/yt-dlp downloading (uppercase)
+nnoremap ;v :set x-hint-command=:sh! vimb-media '<C-R>;' v<CR>;x
+nnoremap ;a :set x-hint-command=:sh! vimb-media '<C-R>;' a<CR>;x
+nnoremap ;V :set x-hint-command=:sh! vimb-media '<C-R>;' V<CR>;x
+nnoremap ;A :set x-hint-command=:sh! vimb-media '<C-R>;' A<CR>;x
 
 # Set default search engine
 shortcut-default duck

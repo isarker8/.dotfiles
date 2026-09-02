@@ -16,6 +16,10 @@
     max_icon_size = 32
     format = "<b>%s</b>\n%b"
 
+[play_sound]
+    summary = "*"
+    script = ~/dotfiles/.config/dunst/notif.sh
+
 [urgency_low]
     foreground = "{foreground}"
     background = "{background}"

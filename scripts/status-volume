@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# Check if muted
-muted=$(amixer -M get Master | grep -o '\[off\]' | head -n 1)
+# Fetch volume of current default sink
+vol=$(pactl get-sink-volume @DEFAULT_SINK@ | awk -F'/' '{print $2}' | head -n 1 | tr -d ' ')
+muted=$(pactl get-sink-mute @DEFAULT_SINK@ | grep -o "yes")
 
-if [ "$muted" = "[off]" ]; then
-    echo "󰝟"
+if [ "$muted" = "yes" ]; then
+    echo "󰝟 Muted"
 else
-    vol=$(amixer -M get Master | awk -F'[][]' '/Left:|Mono:/ { print $2; exit }')
     echo "󰕾 $vol"
 fi

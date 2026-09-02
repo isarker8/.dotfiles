@@ -1,2 +1,2 @@
 --format bv[height=1080]+ba[ext=m4a]
---output ~/to_edit/%(title)s.%(ext)s
+--output ~/yt-dlp-downloads/%(title)s.%(ext)s

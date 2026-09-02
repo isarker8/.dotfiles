@@ -1,11 +1,11 @@
-# Increase volume
-"amixer sset Master 2%+ && pkill -RTMIN+10 dwmblocks"
-   XF86AudioRaiseVolume
+# Raise Volume
+"pactl set-sink-volume @DEFAULT_SINK@ +5% && pkill -RTMIN+10 dwmblocks"
+  XF86AudioRaiseVolume
 
-# Decrease volume
-"amixer sset Master 2%- && pkill -RTMIN+10 dwmblocks"
-   XF86AudioLowerVolume
+# Lower Volume
+"pactl set-sink-volume @DEFAULT_SINK@ -5% && pkill -RTMIN+10 dwmblocks"
+  XF86AudioLowerVolume
 
-# Mute volume
-"amixer sset Master toggle && pkill -RTMIN+10 dwmblocks"
-   XF86AudioMute
+# Toggle Mute
+"pactl set-sink-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 dwmblocks"
+  XF86AudioMute
