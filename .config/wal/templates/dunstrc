@@ -18,7 +18,7 @@
 
 [play_sound]
     summary = "*"
-    script = ~/dotfiles/.config/dunst/notif.sh
+    script = ~/.dotfiles/.config/dunst/notif.sh
 
 [urgency_low]
     foreground = "{foreground}"

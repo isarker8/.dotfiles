@@ -3,7 +3,7 @@
 # set prefered launcher
 PREFERED_LAUNCHER=dmenu
 # set path where urls will be stored
-URL_FILE_PATH=$HOME/dotfiles/.bmks/
+URL_FILE_PATH=$HOME/.dotfiles/.bmks/
 # name of file urls will be stored in
 URL_FILE_NAME=urls
 

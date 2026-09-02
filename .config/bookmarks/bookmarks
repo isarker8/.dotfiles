@@ -2,7 +2,7 @@
 set -eu
 
 # Bookmark file
-BOOKMARKS_FILE="${BOOKMARKS_FILE:-$HOME/dotfiles/.config/bookmarks/bookmarks.txt}"
+BOOKMARKS_FILE="${BOOKMARKS_FILE:-$HOME/.dotfiles/.config/bookmarks/bookmarks.txt}"
 
 # dmenu look
 DMENU="dmenu -i -c -l 30 -p 'Bookmarks:'"
