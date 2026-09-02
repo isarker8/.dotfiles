@@ -80,6 +80,7 @@ c.url.default_page = "file:///home/isarker/.dotfiles/start.html"
 
 c.tabs.title.format = "{audio}{current_title}"
 c.fonts.web.size.default = 20
+config.set('scrolling.smooth', True)
 
 c.url.searchengines = {
 # note - if you use duckduckgo, you can make use of its built in bangs, of which there are many! https://duckduckgo.com/bangs
@@ -104,7 +105,7 @@ config.bind('pp', 'open -- {clipboard}')
 config.bind('pt', 'open -t -- {clipboard}')
 
 # Watch and Download Hints (<ctrl-y> keymap)
-config.bind('<ctrl-y>v', 'hint links spawn umpv "{hint-url}"')
+config.bind('<ctrl-y>v', 'hint links spawn mpv "{hint-url}"')
 config.bind('<ctrl-y>a', 'hint links spawn mpv --no-video "{hint-url}"')
 config.bind('<ctrl-y>V', 'hint links spawn sh -c \'yt-dlp "{hint-url}" && notify-send "yt-dlp" "Video download complete!"\'')
 config.bind('<ctrl-y>A', 'hint links spawn sh -c \'yt-dlp -x --audio-format mp3 "{hint-url}" && notify-send "yt-dlp" "Audio download complete!"\'')

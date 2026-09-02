@@ -1,21 +1,22 @@
 #!/bin/sh
 
-# Create a list of sinks with pretty names
-options=$(pactl -f json list sinks | jq -r '.[] | .description')
+# Create a list of sinks with pretty names using pw-dump
+options=$(pw-dump | jq -r '.[] | select(.info.props["media.class"] == "Audio/Sink") | .info.props["node.description"]' | sort -u)
+
 # Let the user select a description
 selection=$(echo "$options" | dmenu -i -F -bw 3 -l 5 -c -p "Output:")
 
 # Escape or empty selection: quit quietly, no notification
 [ -n "$selection" ] || exit 0
 
-# Extract the corresponding sink name
-sink_name=$(pactl -f json list sinks | jq -r --arg sink_pretty_name "$selection" '.[] | select(.description == $sink_pretty_name) | .name')
+# Extract the corresponding sink ID
+sink_id=$(pw-dump | jq -r --arg desc "$selection" '.[] | select(.info.props["media.class"] == "Audio/Sink" and .info.props["node.description"] == $desc) | .id' | head -n 1)
 
 # Set the selected sink as default
-if [ -n "$sink_name" ]; then
-    if pactl set-default-sink "$sink_name"; then
+if [ -n "$sink_id" ]; then
+    if wpctl set-default "$sink_id"; then
         notify-send "Audio switched to: $selection"
-        pkill -RTMIN+10 dwmblocks
+        kill -44 $(pidof dwmblocks)
     else
         notify-send "Audio switch failed"
     fi

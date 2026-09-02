@@ -14,6 +14,9 @@ dbus-update-activation-environment \
 
 picom -b &
 xrandr -s 1920x1080 &
+pipewire &
+wireplumber &
+pipewire-pulse &
 redshift &
 wal -R &
 xbindkeys &
