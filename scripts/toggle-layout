@@ -28,4 +28,4 @@ else
 fi
 
 # Telling dwmblocks to refresh
-pkill -RTMIN+11 dwmblocks
+kill -39 $(pidof dwmblocks)

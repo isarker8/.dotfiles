@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+
+from datetime import datetime
+import arabic_reshaper
+from bidi.algorithm import get_display
+from hijri_converter import Gregorian
+
+MONTHS = [
+    'محرم',
+    'صفر',
+    'ربيع الأول',
+    'ربيع الثاني',
+    'جمادى الأولى',
+    'جمادى الآخرة',
+    'رجب',
+    'شعبان',
+    'رمضان',
+    'شوال',
+    'ذو القعدة',
+    'ذو الحجة',
+]
+
+now = datetime.now()
+h = Gregorian(now.year, now.month, now.day).to_hijri()
+
+# Translate Western digits to Eastern Indo-Arabic digits
+trans = str.maketrans('0123456789', '٠١٢٣٤٥٦٧٨٩')
+day_str = str(h.day).translate(trans)
+year_str = str(h.year).translate(trans)
+
+raw_text = f'{day_str} {MONTHS[h.month - 1]} {year_str}هـ'
+
+# Reshape joining letters and apply BiDi reordering for non-bidi bars
+reshaped_text = arabic_reshaper.reshape(raw_text)
+bidi_text = get_display(reshaped_text)
+
+print(bidi_text)

@@ -69,15 +69,6 @@ shortcut-add g=https://www.google.com/search?q=$0
 shortcut-add y=https://www.youtube.com/results?search_query=$0
 shortcut-add aw=https://wiki.archlinux.org/index.php?search=$0
 
-# using ;v/a/V/A for media using mpv viewing (lowercase)/yt-dlp downloading (uppercase)
-nnoremap ;v :set x-hint-command=:sh! vimb-media '<C-R>;' v<CR><CR>;x
-nnoremap ;a :set x-hint-command=:sh! vimb-media '<C-R>;' a<CR><CR>;x
-nnoremap ;V :set x-hint-command=:sh! vimb-media '<C-R>;' V<CR><CR>;x
-nnoremap ;A :set x-hint-command=:sh! vimb-media '<C-R>;' A<CR><CR>;x
-
-# Set default search engine
-shortcut-default duck
-
 # Keybindings
 nmap + zI
 nmap - zO

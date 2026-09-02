@@ -2,6 +2,12 @@
 
 statefile="$HOME/.cache/current-layout"
 
+case $BLOCK_BUTTON in
+		1) toggle-layout ;;
+		3) notify-send "Current layout" "$(cat "$statefile" 2>/dev/null)" ;;
+		6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
 case "$(cat "$statefile" 2>/dev/null)" in
     gb)
         printf "GB"
