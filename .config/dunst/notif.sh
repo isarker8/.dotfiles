@@ -1,2 +1,2 @@
 #!/bin/sh
-paplay ~/dotfiles/.config/dunst/notif.mp3
+paplay ~/.dotfiles/.config/dunst/notif.mp3
