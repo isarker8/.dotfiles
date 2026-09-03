@@ -9,7 +9,7 @@ export EDITOR="vim"
 export VISUAL="vim"
 export TERM="alacritty"
 export TERMINAL="alacritty"
-export BROWSER="vimb"
+export BROWSER="qutebrowser"
 
 export PATH="$PATH:/home/isarker/.local/bin"
 
