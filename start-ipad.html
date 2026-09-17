@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>start</title>
+<style>
+  /*
+    Tokyo Night palette, hardcoded (no pywal — Edge on iPadOS can't
+    reach a local dotfiles colors.css either).
+  */
+  :root {
+    --background: #1a1b26;
+    --foreground: #c0caf5;
+    --color0: #1f2335;   /* panel bg */
+    --color4: #7aa2f7;   /* headings */
+    --color5: #bb9af7;   /* accent */
+    --color6: #7dcfff;   /* weather text / link hover */
+    --color7: #a9b1d6;   /* links / date */
+    --color8: #414868;   /* borders */
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: "IBM Plex Mono", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: calc(env(safe-area-inset-top) + 8vh) max(24px, env(safe-area-inset-right))
+             calc(env(safe-area-inset-bottom) + 6vh) max(24px, env(safe-area-inset-left));
+    min-height: 100%;
+  }
+
+  /* ---------- clock ---------- */
+
+  #clock {
+    font-family: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.6rem, 7vw, 5.2rem);
+    letter-spacing: 0.01em;
+    line-height: 1;
+    color: var(--foreground);
+    font-variant-numeric: tabular-nums;
+  }
+
+  #date {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--color7);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- weather strip ---------- */
+
+  #weather {
+    margin-top: 28px;
+    padding: 10px 22px;
+    background: var(--color0);
+    border: 1px solid var(--color8);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--color6);
+    min-width: 280px;
+    text-align: center;
+  }
+
+  /* ---------- link board ---------- */
+
+  #board {
+    margin-top: 56px;
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .col {
+    background: var(--color0);
+    border: 1px solid var(--color8);
+    border-radius: 8px;
+    padding: 18px 20px 20px;
+  }
+
+  .col h2 {
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color8);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color4);
+    letter-spacing: 0.02em;
+  }
+
+  .col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .col li + li { margin-top: 4px; }
+
+  .col a {
+    color: var(--color7);
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: block;
+    padding: 8px 2px;
+    transition: color 0.12s ease;
+  }
+
+  .col a:hover,
+  .col a:active,
+  .col a:focus-visible {
+    color: var(--color6);
+    outline: none;
+  }
+
+  @media (max-width: 700px) {
+    #board { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <div id="clock">00:00:00</div>
+  <div id="date"></div>
+  <div id="weather">loading weather&hellip;</div>
+
+  <div id="board">
+
+    <div class="col">
+      <h2>Arch Linux</h2>
+      <ul>
+        <li><a href="https://archlinux.org">Arch Homepage</a></li>
+        <li><a href="https://wiki.archlinux.org">Arch Wiki</a></li>
+        <li><a href="https://bugs.archlinux.org">Arch Bugs</a></li>
+        <li><a href="https://bbs.archlinux.org">Arch Forums</a></li>
+      </ul>
+    </div>
+
+    <div class="col">
+      <h2>Suckless</h2>
+      <ul>
+        <li><a href="https://suckless.org">Suckless Homepage</a></li>
+        <li><a href="https://dwm.suckless.org">dwm</a></li>
+        <li><a href="https://tools.suckless.org/dmenu">dmenu</a></li>
+      </ul>
+    </div>
+
+    <div class="col">
+      <h2>Video</h2>
+      <ul>
+        <li><a href="https://youtube.com">YouTube</a></li>
+      </ul>
+    </div>
+
+    <div class="col">
+      <h2>Docs</h2>
+      <ul>
+        <li><a href="https://raw.githubusercontent.com/qutebrowser/qutebrowser/main/doc/img/cheatsheet-big.png">qt cs</a></li>
+        <li><a href="https://vimdoc.sourceforge.net/htmldoc/usr_toc.html">Vim Docs</a></li>
+      </ul>
+    </div>
+
+    <div class="col">
+      <h2>Ai</h2>
+      <ul>
+        <li><a href="https://gemini.google.com/app">Gemini</a></li>
+        <li><a href="https://chatgpt.com/">ChatGPT</a></li>
+        <li><a href="https://claude.ai/new">Claude</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+<script>
+  // ---- clock ----
+  function tick() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, "0");
+    document.getElementById("clock").textContent =
+      `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    document.getElementById("date").textContent =
+      now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // ---- weather (wttr.in, no API key, fixed location — no GPS prompt) ----
+  const CITY = "London";
+
+  fetch(`https://wttr.in/${encodeURIComponent(CITY)}?format=j1`)
+  .then(r => {
+    if (!r.ok) throw new Error("bad response");
+    return r.json();
+  })
+  .then(data => {
+    const cur = data.current_condition[0];
+    const desc = cur.weatherDesc[0].value;
+    document.getElementById("weather").textContent =
+      `London: ${desc} ${cur.temp_C}°C (feels ${cur.FeelsLikeC}°C)`;
+  })
+  .catch(() => {
+    document.getElementById("weather").textContent = "weather unavailable";
+  });
+</script>
+
+</body>
+</html>
