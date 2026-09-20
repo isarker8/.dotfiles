@@ -39,4 +39,4 @@ alias mkdir='mkdir -p'
 alias ..="cd .."
 
 # Cd Suckless
-alias cds="cd ~/repos/Suckless"
+alias cds="cd ~/clones/Suckless"
