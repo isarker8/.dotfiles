@@ -1,50 +1,159 @@
+/* ==========================================================
+   Waterfox userChrome.css - pywal-themed vertical tabs
+   Requires: about:config -> toolkit.legacyUserProfileCustomizations.stylesheets = true
+   Put in:   <profile>/chrome/userChrome.css
+   ========================================================== */
+
 @import url('file:///home/isarker/.cache/wal/colors.css');
 
 :root {
-  /* semantic alias so you only pick an accent once */
-  --wal-accent: var(--color8);
+  /* pick the accent once, use everywhere */
+  --wal-accent:   var(--color4);
+  --wal-tab-bg:   color-mix(in srgb, var(--background) 60%, transparent);
+  --wal-hover-bg: color-mix(in srgb, var(--color0) 80%, transparent);
+  --wal-select-bg: var(--color1);
+
+  /* Firefox's own tab variables, so native code paths pick them up too */
+  --tab-selected-bgcolor:   var(--wal-select-bg) !important;
+  --tab-selected-textcolor: var(--foreground) !important;
+  --toolbar-bgcolor:        var(--background) !important;
+  --toolbar-color:          var(--foreground) !important;
+  --lwt-sidebar-background-color: var(--background) !important;
+  --lwt-sidebar-text-color:       var(--foreground) !important;
 }
 
-/* ---------- Toolbox / nav-bar ---------- */
+/* ---------- Hide the horizontal tab strip (vertical tabs mode) ---------- */
+#TabsToolbar {
+  background-color: var(--background) !important;
+}
+
+/* ---------- Toolbars ---------- */
 #navigator-toolbox,
-#TabsToolbar,
+#nav-bar,
 #PersonalToolbar {
   background-color: var(--background) !important;
   color: var(--foreground) !important;
+  border-color: var(--color0) !important;
 }
 
-#nav-bar {
-  /* tint the wallpaper with --background so contrast stays
-     consistent no matter which image wal picks */
+/* ---------- The vertical tabs rail: wallpaper, tinted for contrast ---------- */
+#sidebar-main {
   background-image:
     linear-gradient(
-      color-mix(in srgb, var(--background) 55%, transparent),
-      color-mix(in srgb, var(--background) 55%, transparent)
+      color-mix(in srgb, var(--background) 60%, transparent),
+      color-mix(in srgb, var(--background) 60%, transparent)
     ),
-    var(--wallpaper);
-  background-size: cover;
-  background-position: center;
+    var(--wallpaper) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: var(--background) !important;
   color: var(--foreground) !important;
+  border-inline-end: 1px solid var(--color0) !important;
 }
 
-/* ---------- Tabs ---------- */
-.tab-background {
-  background-color: var(--background) !important;
+/* Sidebar launcher buttons (inherit through the shadow DOM via variables) */
+#sidebar-main {
+  --button-hover-bgcolor:  var(--wal-hover-bg);
+  --button-active-bgcolor: var(--wal-select-bg);
+  --button-color:          var(--foreground);
+  --icon-color:            var(--foreground);
+  --toolbarbutton-icon-fill: var(--foreground);
 }
-.tabbrowser-tab[selected="true"] .tab-background {
-  background-color: var(--color1) !important;
+
+/* ---------- Tab list ---------- */
+#vertical-tabs,
+#vertical-tabs .tab-background {
+  background-color: transparent !important;
 }
-.tabbrowser-tab:hover .tab-background {
-  background-color: var(--color0) !important;
+
+/* Unselected tabs: translucent so the wallpaper shows through */
+#vertical-tabs .tabbrowser-tab .tab-background {
+  background-color: var(--wal-tab-bg) !important;
+  border-radius: 8px !important;
+  transition: background-color 120ms ease !important;
 }
-.tab-line[selected="true"] {
+
+/* Hover */
+#vertical-tabs .tabbrowser-tab:hover:not([selected]) .tab-background {
+  background-color: var(--wal-hover-bg) !important;
+}
+
+/* Selected */
+#vertical-tabs .tabbrowser-tab[selected] .tab-background {
+  background-color: var(--wal-select-bg) !important;
+  outline: 1px solid var(--wal-accent) !important;
+  outline-offset: -1px;
+  box-shadow: none !important;
+}
+
+/* Accent bar on the selected tab (if this build still renders .tab-line) */
+#vertical-tabs .tabbrowser-tab[selected] .tab-line {
   background-color: var(--wal-accent) !important;
 }
-.tabbrowser-tab .tab-label {
+
+/* Labels & icons */
+#vertical-tabs .tab-label,
+#vertical-tabs .tab-icon-stack,
+#vertical-tabs .tab-close-button {
+  color: var(--foreground) !important;
+  fill: var(--foreground) !important;
+}
+#vertical-tabs .tabbrowser-tab:not([selected]) .tab-label {
+  opacity: 0.8;
+}
+
+/* Pinned tabs */
+#vertical-tabs .tabbrowser-tab[pinned] .tab-background {
+  background-color: color-mix(in srgb, var(--color2) 35%, transparent) !important;
+}
+
+/* Audio / attention / unread indicators */
+.tabbrowser-tab[soundplaying] .tab-icon-overlay,
+.tabbrowser-tab[muted] .tab-icon-overlay {
+  background-color: var(--wal-accent) !important;
+  fill: var(--background) !important;
+  border-radius: 50%;
+}
+.tabbrowser-tab[attention]:not([selected]) .tab-icon-stack::after,
+.tabbrowser-tab[notselectedsinceload]:not([selected]) .tab-icon-stack::after {
+  background-color: var(--wal-accent) !important;
+}
+
+/* ---------- Tab groups ---------- */
+.tab-group-label-container .tab-group-label {
+  color: var(--background) !important;
+  background-color: var(--wal-accent) !important;
+}
+
+/* ---------- New-tab button ---------- */
+#vertical-tabs #tabs-newtab-button,
+#vertical-tabs .tabs-newtab-button {
+  color: var(--foreground) !important;
+  fill: var(--foreground) !important;
+}
+#vertical-tabs #tabs-newtab-button:hover,
+#vertical-tabs .tabs-newtab-button:hover {
+  background-color: var(--wal-hover-bg) !important;
+}
+
+/* ---------- Sidebar splitter / resize handle ---------- */
+#sidebar-splitter,
+#sidebar-main + splitter {
+  background-color: var(--color0) !important;
+  border-color: var(--color0) !important;
+}
+#sidebar-splitter:hover {
+  background-color: var(--wal-accent) !important;
+}
+
+/* ---------- Flyout panel (Bookmarks / History) ---------- */
+#sidebar-box,
+#sidebar-header {
+  background-color: var(--background) !important;
   color: var(--foreground) !important;
 }
 
-/* ---------- URL bar ---------- */
+/* ---------- URL bar, so the toolbar matches the rail ---------- */
 #urlbar-background {
   background-color: var(--color0) !important;
   border-color: var(--color1) !important;
@@ -56,18 +165,11 @@
 #urlbar-input {
   color: var(--foreground) !important;
 }
-
-/* Urlbar results / autocomplete panel */
-.urlbarView,
-.urlbarView-body-inner {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-}
 .urlbarView-row[selected] {
   background-color: var(--color1) !important;
 }
 
-/* ---------- Panels & menus (hamburger, right-click, etc) ---------- */
+/* ---------- Menus & panels ---------- */
 menupopup,
 panel {
   --panel-background: var(--background);
@@ -75,11 +177,7 @@ panel {
   background-color: var(--background) !important;
   color: var(--foreground) !important;
 }
-menuitem,
-menu,
-.subviewbutton {
-  /* kill Firefox's own hover/active transition so its native highlight
-     colour can't fade through before ours applies */
+menuitem, menu, .subviewbutton {
   transition: none !important;
 }
 menuitem:hover,
@@ -91,54 +189,23 @@ menu[_moz-menuactive="true"],
   color: var(--foreground) !important;
 }
 
-/* ---------- Sidebar ---------- */
-#sidebar-box,
-#sidebar-header {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-}
-
-/* ---------- Vertical tabs sidebar (wallpaper effect) ---------- */
-/* #sidebar-main is the native vertical-tabs rail itself - separate from
-   #sidebar-box above, which is the flyout panel for Bookmarks/History/etc.
-   Same recipe as #nav-bar: tint --wallpaper with --background so it stays
-   readable no matter which image wal picks. */
-#sidebar-main {
-  background-image:
-    linear-gradient(
-      color-mix(in srgb, var(--background) 55%, transparent),
-      color-mix(in srgb, var(--background) 55%, transparent)
-    ),
-    var(--wallpaper) !important;
-  background-size: cover !important;
-  background-position: center !important;
-  color: var(--foreground) !important;
-}
-
-/* #vertical-tabs is the tab list living inside #sidebar-main. Its default
-   tab background is forced transparent (scoped here, so the horizontal
-   strip above is untouched) so the wallpaper shows through behind
-   unselected tabs, the same way it shows through the padding of #nav-bar.
-   Selected/hover are re-declared at the same #vertical-tabs specificity
-   so they still win over the transparent default. */
-#vertical-tabs,
-#vertical-tabs .tab-background {
-  background-color: transparent !important;
-}
-#vertical-tabs .tabbrowser-tab[selected="true"] .tab-background {
-  background-color: var(--color1) !important;
-}
-#vertical-tabs .tabbrowser-tab:hover .tab-background {
-  background-color: var(--color0) !important;
-}
-
-/* ---------- Find bar ---------- */
-#findbar {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-}
-
-/* ---------- Chrome scrollbars ---------- */
+/* ---------- Scrollbars ---------- */
 * {
-  scrollbar-color: var(--color1) var(--background);
+  scrollbar-color: var(--color1) transparent;
+  scrollbar-width: thin;
 }
+
+/* ==========================================================
+   OPTIONAL: slim the rail and expand on hover.
+   Uncomment if you want a collapsed-by-default rail.
+   ========================================================== */
+/*
+#sidebar-main {
+  min-width: 48px !important;
+  max-width: 48px !important;
+  transition: max-width 150ms ease !important;
+}
+#sidebar-main:hover {
+  max-width: 260px !important;
+}
+*/

@@ -1,0 +1,6 @@
+*,
+*::before,
+*::after {
+    font-family: "JetBrainsMono Nerd Font", "JetBrainsMono Nerd Font", monospace !important;
+    border-radius: 0 !important;
+}
