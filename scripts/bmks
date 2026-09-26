@@ -30,9 +30,22 @@ If you would prefer to have your bookmarks stored in alternate location there ar
 }
 
 bmks_add() {
+	if [ -z "$url" ]; then
+		case $PREFERED_LAUNCHER in
+			dmenu) url=$(dmenu -c -bw 3 -i -p 'URL: ' < /dev/null) ;;
+			fzf)   printf "URL: "; read url ;;
+		esac
+	fi
+
 	[ -z "$url" ] && printf "Error: url must be provided\n\n" && show_usage && exit 0
-	printf "Description: "
-	read description
+
+	if [ "$PREFERED_LAUNCHER" = "dmenu" ]; then
+		description=$(dmenu -c -bw 3 -i -p 'Description (optional): ' < /dev/null)
+	else
+		printf "Description: "
+		read description
+	fi
+
 	[ -z "$description" ] && echo "$url" >> $URL_FILE_PATH/$URL_FILE_NAME
 	[ -n "$description" ] && echo "$description :: $url" >> $URL_FILE_PATH/$URL_FILE_NAME
 }

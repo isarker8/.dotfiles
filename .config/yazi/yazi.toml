@@ -1,6 +1,6 @@
 # yazi.toml
 [mgr]
-show_hidden = true
+#show_hidden = true
 
 cwd = { fg = "#a9b1d6", italic = true }
 
