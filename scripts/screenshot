@@ -6,22 +6,45 @@ export DISPLAY="${DISPLAY:-:0}"
 for cmd in xclip import notify-send dmenu; do command -v "$cmd" &>/dev/null || { echo "Missing: $cmd" >&2; exit 1; }; done
 
 OUTDIR="${2:-$HOME/Pictures/screenshots}"; mkdir -p "$OUTDIR"
-FILE="$OUTDIR/$(date +%Y"-"%m"-"%d_%H":"%M":"%S).png"
+DEFAULT_NAME="$(date +%Y-%m-%d_%H:%M:%S).png"
 TMP=$(mktemp --suffix=.png); trap 'rm -f "$TMP"' EXIT
+SAVE_TIMEOUT=10000   # ms the Save button stays available
 
-show_help(){ 
+show_help(){
     cat <<EOF
 Usage: $0 [color|full|window|selection] [output_dir]
 If run without arguments, it opens a dmenu prompt.
+Every screenshot is copied to the clipboard; the notification has a Save action.
 EOF
 }
 
-post(){ 
-    xclip -selection clipboard -t image/png -i "$FILE" && notify-send -i "$FILE" "Screenshot: $(basename "$FILE")"
+post(){
+    # 1. always to clipboard
+    xclip -selection clipboard -t image/png -i "$TMP"
     command -v imgcliphist &>/dev/null && imgcliphist add
+
+    # 2. persistent copy for the background notification handler
+    #    (the EXIT trap removes $TMP as soon as this script finishes)
+    local pending
+    pending=$(mktemp --suffix=.png "${XDG_RUNTIME_DIR:-/tmp}/screenshot.XXXXXX")
+    cp "$TMP" "$pending"
+
+    # 3. notification with a Save action, detached so the script can exit
+    (
+        action=$(notify-send -w -t "$SAVE_TIMEOUT" -i "$pending" \
+                    -A default=Save \
+                    "Screenshot copied to clipboard" "Click to save" 2>/dev/null) || true
+        if [ "$action" = default ]; then
+            mv "$pending" "$OUTDIR/$DEFAULT_NAME"
+            notify-send -i "$OUTDIR/$DEFAULT_NAME" "Saved" "$OUTDIR/$DEFAULT_NAME"
+        else
+            rm -f "$pending"
+        fi
+    ) >/dev/null 2>&1 &
+    disown
 }
 
-colorpicker(){ 
+colorpicker(){
     command -v magick &>/dev/null || { notify-send "Missing: magick"; exit 1; }
     if command -v slop &>/dev/null; then
         import -window root -crop "$(slop --tolerance=0 || exit 1)" "$TMP"
@@ -29,23 +52,23 @@ colorpicker(){
         import "$TMP"
     fi
     hex=$(magick "$TMP" -scale 1x1\! -format "#%[hex:p{0,0}]" info: 2>/dev/null || echo "#??????")
-    echo "$hex" | xclip -selection clipboard -i && notify-send -i "$TMP" "Color: $hex"
+    printf '%s' "$hex" | xclip -selection clipboard -i && notify-send -i "$TMP" "Color: $hex"
 }
 
-capture_full(){ 
-    import -window root "$FILE" && post
+capture_full(){
+    import -window root "$TMP" && post
 }
 
-capture_window(){ 
+capture_window(){
     command -v xdotool &>/dev/null || { echo "Missing: xdotool" >&2; exit 1; }
-    import -window "$(xdotool getwindowfocus -f)" "$FILE" && post
+    import -window "$(xdotool getwindowfocus -f)" "$TMP" && post
 }
 
-capture_selection(){ 
+capture_selection(){
     if command -v slop &>/dev/null; then
-        import -window root -crop "$(slop --tolerance=0 || exit 1)" "$FILE" && post
+        import -window root -crop "$(slop --tolerance=0 || exit 1)" "$TMP" && post
     else
-        import "$FILE" && post
+        import "$TMP" && post
     fi
 }
 
@@ -59,12 +82,12 @@ main(){
     fi
 
     case "${1:-}" in
-        -h|--help)     show_help ;;
-        "󰴱 color"*)    colorpicker ;;
-        " full")      capture_full ;;
-        "󱣴 window")    capture_window ;;
-        "󰩭 selection") capture_selection ;;
-        *)             capture_selection ;;
+        -h|--help)   show_help ;;
+        *color*)     colorpicker ;;
+        *full*)      capture_full ;;
+        *window*)    capture_window ;;
+        *selection*) capture_selection ;;
+        *)           capture_selection ;;
     esac
 }
 
