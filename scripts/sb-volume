@@ -1,20 +1,33 @@
 #!/bin/sh
 
-# Fetch volume and mute status of current default sink
-vol_info=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
-vol=$(echo "$vol_info" | awk '{print int($2 * 100)"%"}')
-muted=$(echo "$vol_info" | grep -o "\[MUTED\]")
+SINK="@DEFAULT_AUDIO_SINK@"
 
-case $BLOCK_BUTTON in
-		1) wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;
-		3) setsid -f pavucontrol ;;
-		2) notify-send "Volume" "$vol" ;;
-		4) wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+ ;;
-		5) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- ;;
-		6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+refresh() {
+    kill -44 "$(pidof dwmblocks)" 2>/dev/null
+}
+
+# Called from keybinds: volume.sh up|down|mute
+case "$1" in
+    up)   wpctl set-volume -l 1.0 "$SINK" 5%+ ; refresh ; exit 0 ;;
+    down) wpctl set-volume "$SINK" 5%- ; refresh ; exit 0 ;;
+    mute) wpctl set-mute "$SINK" toggle ; refresh ; exit 0 ;;
 esac
 
-if [ "$muted" = "[MUTED]" ]; then
+# Called from dwmblocks mouse clicks
+case $BLOCK_BUTTON in
+    1) wpctl set-mute "$SINK" toggle ;;
+    2) notify-send "Volume" "$(wpctl get-volume "$SINK" | awk '{print int($2 * 100)"%"}')" ;;
+    3) setsid -f pavucontrol ;;
+    4) wpctl set-volume -l 1.0 "$SINK" 5%+ ;;
+    5) wpctl set-volume "$SINK" 5%- ;;
+    6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+# Read state AFTER any changes so the bar shows the new value
+vol_info=$(wpctl get-volume "$SINK")
+vol=$(echo "$vol_info" | awk '{print int($2 * 100)"%"}')
+
+if echo "$vol_info" | grep -q "\[MUTED\]"; then
     echo "󰝟 "
 else
     echo "󰕾 $vol"
