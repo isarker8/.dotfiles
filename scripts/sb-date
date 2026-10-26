@@ -1,7 +1,9 @@
 #!/bin/sh
-
+# dwmblocks date block: no Python at runtime, one `date` + one `awk`.
+DATA="${XDG_DATA_HOME:-$HOME/.local/share}/sb-date/data"
 STATE_FILE=/tmp/dwmblocks_date_state
-STATE=$(cat "$STATE_FILE" 2>/dev/null || echo 0)
+STATE=$(cat "$STATE_FILE" 2>/dev/null)
+STATE=${STATE:-0}
 
 # Left click toggles Hijri (0) / Gregorian (1)
 if [ "$BLOCK_BUTTON" = 1 ]; then
@@ -9,8 +11,34 @@ if [ "$BLOCK_BUTTON" = 1 ]; then
     echo "$STATE" > "$STATE_FILE"
 fi
 
-if [ "$STATE" = 1 ]; then
-    get_hijri g
-else
-    get_hijri
-fi
+[ -r "$DATA" ] || { date '+%H:%M | %a %d %b'; exit; }
+
+set -- $(date '+%H %M %u %Y %m %d')
+
+exec awk -F'\t' -v H="$1" -v MIN="$2" -v WD="$3" -v Y="$4" -v MO="$5" -v D="$6" -v G="$STATE" '
+function dig(s,   i, o, n) {
+    n = split("٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩", A, " ")
+    for (i = 1; i <= length(s); i++) o = o A[substr(s,i,1) + 1]
+    return o
+}
+function dfc(y, m, d,   era, yoe, doy, doe) {  # days since 1970-01-01
+    if (m <= 2) y--
+    era = int(y / 400); yoe = y - era * 400
+    doy = int((153 * (m + (m > 2 ? -3 : 9)) + 2) / 5) + d - 1
+    doe = yoe * 365 + int(yoe / 4) - int(yoe / 100) + doy
+    return era * 146097 + doe - 719468
+}
+BEGIN { today = dfc(Y + 0, MO + 0, D + 0) }
+$1 == "S" { suf = $2 }
+$1 == "M" { hm_name[$2 + 0] = $3 }
+$1 == "G" { gm_name[$2 + 0] = $3 }
+$1 == "D" { day_name[$2 + 0] = $3 }
+$1 == "T" && $2 + 0 <= today { start = $2 + 0; hy = $3; hm = $4 }   # table is sorted
+END {
+    t = dig(H) ":" dig(MIN)
+    if (G == 1)
+        d = dig(Y) " " gm_name[MO + 0] " " dig(D + 0) " " day_name[WD + 0]
+    else
+        d = suf dig(hy) " " hm_name[hm + 0] " " dig(today - start + 1)
+    print t " | " d
+}' "$DATA"

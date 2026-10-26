@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""Run ONCE (needs your existing python libs) to bake the Arabic shaping and the
+Umm al-Qura month table into a plain text file. sb-date then needs no Python.
+
+    python3 gen-sb-date-data
+
+Writes ~/.local/share/sb-date/data (override with $XDG_DATA_HOME).
+"""
+import os
+from datetime import date
+import arabic_reshaper
+from bidi.algorithm import get_display
+from hijri_converter import Hijri, Gregorian
+
+HIJRI_MONTHS = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الآخرة',
+                'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة']
+GREG_MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+               'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+DAYS = ['الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد']
+TRANS = str.maketrans('0123456789', '٠١٢٣٤٥٦٧٨٩')
+ar = lambda n: str(n).translate(TRANS)
+vis = lambda s: get_display(arabic_reshaper.reshape(s))
+
+SUFFIX = vis('هـ')
+
+# Self-check: piecewise composition must equal the original whole-string output.
+for i, m in enumerate(HIJRI_MONTHS):
+    whole = vis(f'{ar(17)} {m} {ar(1447)}هـ')
+    assert whole == f'{SUFFIX}{ar(1447)} {vis(m)} {ar(17)}', f'hijri mismatch: {m}'
+for i, m in enumerate(GREG_MONTHS):
+    d = DAYS[i % 7]
+    whole = vis(f'{d} {ar(26)} {m} {ar(2026)}')
+    assert whole == f'{ar(2026)} {vis(m)} {ar(26)} {vis(d)}', f'greg mismatch: {m}'
+
+base = date(1970, 1, 1)
+out = [f'S\t{SUFFIX}']
+out += [f'M\t{i+1}\t{vis(m)}' for i, m in enumerate(HIJRI_MONTHS)]
+out += [f'G\t{i+1}\t{vis(m)}' for i, m in enumerate(GREG_MONTHS)]
+out += [f'D\t{i+1}\t{vis(d)}' for i, d in enumerate(DAYS)]
+for hy in range(1343, 1501):          # range supported by hijri-converter
+    for hm in range(1, 13):
+        g = Hijri(hy, hm, 1).to_gregorian()
+        out.append(f'T\t{(date(g.year, g.month, g.day) - base).days}\t{hy}\t{hm}')
+
+d = os.path.join(os.environ.get('XDG_DATA_HOME', os.path.expanduser('~/.local/share')), 'sb-date')
+os.makedirs(d, exist_ok=True)
+with open(os.path.join(d, 'data'), 'w', encoding='utf-8') as f:
+    f.write('\n'.join(out) + '\n')
+print('wrote', os.path.join(d, 'data'))
