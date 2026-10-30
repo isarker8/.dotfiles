@@ -1,17 +1,37 @@
 #!/usr/bin/env bash
 
-# slightly scuffed wallpaper picker menu for use with pywal - uses nsxiv if installed, otherwise uses dmenu
+# wallpaper picker menu for use with pywal - shows a thumbnail grid in rofi
 
 FOLDER=~/Pictures/wallpapers # wallpaper folder
 SCRIPT=~/.dotfiles/scripts/pywal16 # script to run after wal for refreshing programs, etc.
 
 menu () {
-				CHOICE=$(nsxiv -otb $FOLDER/*)
+	# collect images (case-insensitive extensions, sorted)
+	shopt -s nullglob nocaseglob
+	local files=("$FOLDER"/*.{jpg,jpeg,png,webp,gif,bmp})
+	shopt -u nullglob nocaseglob
 
-case $CHOICE in
-		*.*) wal -i "$CHOICE" -o $SCRIPT ;;
-		*) exit 0 ;;
-esac
+	[ "${#files[@]}" -gt 0 ] || { notify-send "No wallpapers found in $FOLDER"; exit 1; }
+
+	# each row: label \0 icon \x1f path  -> rofi draws the image as the icon
+	local idx
+	idx=$(
+		for f in "${files[@]}"; do
+			printf '%s\0icon\x1f%s\n' "${f##*/}" "$f"
+		done | rofi -dmenu -i -show-icons -format i -p "Wallpaper" \
+			-theme-str '
+				window   {width: 60%;}
+				listview {columns: 4; lines: 3; spacing: 10px; fixed-columns: true;}
+				element  {orientation: vertical; padding: 8px; spacing: 6px;}
+				element-icon {size: 200px; horizontal-align: 0.5;}
+				element-text {horizontal-align: 0.5;}
+			'
+	)
+
+	# Escape / empty selection: quit quietly
+	[ -n "$idx" ] || exit 0
+
+	wal -i "${files[$idx]}" -o "$SCRIPT"
 }
 
 # If given arguments:
@@ -19,8 +39,8 @@ esac
 # Second will be used as theme (use wal --theme to view built-in themes)
 
 case "$#" in
-		0) menu ;;
-		1) wal -i "$1" -o $SCRIPT ;;
-		2) wal -i "$1" --theme $2 -o $SCRIPT ;;
-		*) exit 0 ;;
+	0) menu ;;
+	1) wal -i "$1" -o "$SCRIPT" ;;
+	2) wal -i "$1" --theme "$2" -o "$SCRIPT" ;;
+	*) exit 0 ;;
 esac

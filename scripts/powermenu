@@ -5,7 +5,7 @@ choice=$(printf '%s\n' \
     " Restart" \
     " Lock" \
     "󰤄 Sleep" |
-    dmenu -c -bw 3 -i -l 2 -F -g 2 -p "Power:")
+    rofi -dmenu -i -p "Power" -theme-str 'listview {lines: 2; columns: 2;}')
 
 case "$choice" in
     "󰐥 Shutdown")

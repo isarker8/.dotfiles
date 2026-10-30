@@ -10,6 +10,9 @@ configuration{
     display-drun: " ";
     display-run: " ";
     display-window: " ";
+
+    font: "JetBrainsMono Nerd Font 13"; 
+    case-sensitive: false;
     
     //adding vim keybindings
     kb-row-up: "Up,Control+k";
@@ -26,4 +29,16 @@ configuration{
     kb-move-char-forward: "Control+f";
     kb-mode-complete: "Control+o";
 }
+
+// importing colours from wal
 @import "~/.cache/wal/colors-rofi-dark"
+
+window {
+    location: center;
+    anchor: center;
+    border: 3px;
+}
+
+listview {
+    fixed-height: false;
+}

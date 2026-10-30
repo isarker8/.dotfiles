@@ -2,7 +2,7 @@
 
 # Array of disks and matching icons
 DISKS=("/" "/home")
-ICONS=(" " " ")
+ICONS=(" " "󰋜 ")
 N=${#DISKS[@]}
 
 # State file: "INDEX FORMAT"

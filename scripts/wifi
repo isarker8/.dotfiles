@@ -2,7 +2,7 @@
 #
 # n0
 # File: wifi_selector.sh
-# Description: quick wifi switcher (iwd) with dmenu or peco
+# Description: quick wifi switcher (iwd) with rofi or peco
 #
 # make sure iwd is enabled
 # ln -s /etc/sv/dbus /var/service/
@@ -15,10 +15,10 @@
 usage() {
 echo "
 USAGE: ./wifi_selector.sh [OPTIONS]
-  Quick wifi menu using iwd and your choice of dmenu or peco
+  Quick wifi menu using iwd and your choice of rofi or peco
 
 OPTIONS:
-  -d	dmenu, depends on X
+  -r	rofi, depends on X (-d still works as an alias)
   -p	peco, works in a tty
 "
 exit 1
@@ -26,11 +26,15 @@ exit 1
 
 [ $# -eq 0 ] && usage
 
+# selector <prompt>: reads choices on stdin, prints the pick on stdout
 case $1 in
-	-d) SELECTOR="dmenu -c -l 10 -p"
+	-r|-d) selector() {
+	        rofi -dmenu -i -matching fuzzy -p "$1" \
+	            -theme-str 'listview {lines: 10;}'
+	    }
 	    ;;
-	-p) SELECTOR="peco --initial-index 2 --prompt"
-	    ;; 
+	-p) selector() { peco --initial-index 2 --prompt "$1"; }
+	    ;;
 	*)  usage
 	    ;;
 esac
@@ -40,7 +44,7 @@ iwctlstrip() {
 }
 
 get_interface() {
-    INTFC=$(iwctl device list | iwctlstrip | $SELECTOR "Select an interface:" | awk '{print $1}') 
+    INTFC=$(iwctl device list | iwctlstrip | selector "Select an interface" | awk '{print $1}') 
 }
 
 scan() {
@@ -49,7 +53,7 @@ scan() {
 }
 
 get_ssid() {
-    CHOSEN=$(printf "$SCAN_RESULTS" | $SELECTOR "Chose a network:")
+    CHOSEN=$(printf "$SCAN_RESULTS" | selector "Choose a network")
     SSID=$(printf "$CHOSEN" | awk -F" {2,}" '{print $2}' | sed 's/>//' | awk '{$1=$1;print}')
     [[ "$(printf "$CHOSEN" | awk -F" {2,}" '{print $3}')" == "psk" ]] && PSK=1 || PSK=0
     [[ "$(printf "$CHOSEN" | awk -F" {2,}" '{print $3}')" == "open" ]] && OPEN=1 || OPEN=0
@@ -60,7 +64,7 @@ get_ssid() {
 }
 
 get_psk() {
-    PSK=$(printf 'exit\n' | $SELECTOR "Enter WPA/WPA2 Secret Passphrase:" | awk '{print}')
+    PSK=$(printf 'exit\n' | selector "Enter WPA/WPA2 Secret Passphrase" | awk '{print}')
 }
 
 connect_with_open() {

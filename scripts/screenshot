@@ -3,7 +3,7 @@ set -euo pipefail
 export DISPLAY="${DISPLAY:-:0}"
 
 # Dependencies check
-for cmd in xclip import notify-send dmenu; do command -v "$cmd" &>/dev/null || { echo "Missing: $cmd" >&2; exit 1; }; done
+for cmd in xclip import notify-send rofi; do command -v "$cmd" &>/dev/null || { echo "Missing: $cmd" >&2; exit 1; }; done
 
 OUTDIR="${2:-$HOME/Pictures/screenshots}"; mkdir -p "$OUTDIR"
 DEFAULT_NAME="$(date +%Y-%m-%d_%H:%M:%S).png"
@@ -13,7 +13,7 @@ SAVE_TIMEOUT=10000   # ms the Save button stays available
 show_help(){
     cat <<EOF
 Usage: $0 [color|full|window|selection] [output_dir]
-If run without arguments, it opens a dmenu prompt.
+If run without arguments, it opens a rofi prompt.
 Every screenshot is copied to the clipboard; the notification has a Save action.
 EOF
 }
@@ -73,9 +73,9 @@ capture_selection(){
 }
 
 main(){ 
-    # If no argument is passed, use dmenu to choose
+    # If no argument is passed, use rofi to choose
     if [ $# -eq 0 ]; then
-        choice=$(printf " full\n󱣴 window\n󰩭 selection\n󰴱 color" | dmenu -i -F -bw 3 -c -l 2 -g 2 -p "Screenshot mode:")
+        choice=$(printf " full\n󱣴 window\n󰩭 selection\n󰴱 color" | rofi -dmenu -i -p "Screenshot mode" -theme-str 'listview {lines: 2; columns: 2;}')
         [ -z "$choice" ] && exit 0
         sleep 0.3
         set -- "$choice"

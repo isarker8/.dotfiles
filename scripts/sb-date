@@ -11,7 +11,7 @@ if [ "$BLOCK_BUTTON" = 1 ]; then
     echo "$STATE" > "$STATE_FILE"
 fi
 
-[ -r "$DATA" ] || { date '+%H:%M | %a %d %b'; exit; }
+[ -r "$DATA" ] || { date '+%H:%M | %b %d %b'; exit; }
 
 set -- $(date '+%H %M %u %Y %m %d')
 
