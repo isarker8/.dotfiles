@@ -10,12 +10,12 @@ esac
 
 case "$(cat "$statefile" 2>/dev/null)" in
     gb)
-        printf "GB"
+        printf " GB"
         ;;
     ara)
-        printf "AR"
+        printf " 󱌨"
         ;;
     *)
-        printf "??"
+        printf " ?"
         ;;
 esac

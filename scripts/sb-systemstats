@@ -29,7 +29,7 @@ echo "CPU_TEMP=$CPU_TEMP" >> /tmp/dwmblocks_debug.log
 
 
 # Memory and CPU usage
-MEM_USE=$(free -h | awk '/^Mem/ { printf $3"/"$2 }' | sed s/i//g)
+MEM_USE=$(free -h | awk '/^Mem/ { printf $3 }' | sed s/i//g)
 
 
 # Show warning icon if CPU temp are high

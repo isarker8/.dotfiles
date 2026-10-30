@@ -25,5 +25,6 @@ clipmenud &
 dwmblocks &
 dunst &
 prayer-times daemon &
+export CM_LAUNCHER=rofi
 
 exec dwm
