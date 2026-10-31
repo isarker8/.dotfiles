@@ -42,7 +42,7 @@ esac
 
 
 # Send to bar
-echo "$CPU_ICON $CPU_TEMP°C    ${MEM_USE}"
+echo "$CPU_ICON $CPU_TEMP°C   ${MEM_USE}"
 
 
 # Clicking on bar

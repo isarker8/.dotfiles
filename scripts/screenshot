@@ -44,7 +44,7 @@ post(){
     disown
 }
 
-colorpicker(){
+colourpicker(){
     command -v magick &>/dev/null || { notify-send "Missing: magick"; exit 1; }
     if command -v slop &>/dev/null; then
         import -window root -crop "$(slop --tolerance=0 || exit 1)" "$TMP"
@@ -75,7 +75,7 @@ capture_selection(){
 main(){ 
     # If no argument is passed, use rofi to choose
     if [ $# -eq 0 ]; then
-        choice=$(printf " full\n󱣴 window\n󰩭 selection\n󰴱 color" | rofi -dmenu -i -p "Screenshot mode" -theme-str 'listview {lines: 2; columns: 2;}')
+        choice=$(printf " full\n󱣴 window\n󰩭 selection\n󰴱 colour" | rofi -dmenu -i -p "Screenshot mode" -theme-str 'listview {lines: 2; columns: 2;}')
         [ -z "$choice" ] && exit 0
         sleep 0.3
         set -- "$choice"
@@ -83,7 +83,7 @@ main(){
 
     case "${1:-}" in
         -h|--help)   show_help ;;
-        *color*)     colorpicker ;;
+        *colour*)    colourpicker ;;
         *full*)      capture_full ;;
         *window*)    capture_window ;;
         *selection*) capture_selection ;;

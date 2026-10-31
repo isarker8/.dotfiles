@@ -15,7 +15,7 @@ read INDEX FORMAT < "$DISKS_FILE"
 # 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
 case $BLOCK_BUTTON in
     1) FORMAT=$(( (FORMAT + 1) % 2 ))        ; echo "$INDEX $FORMAT" > "$DISKS_FILE" ;;
-    3) notify-send -t 60000 "Disks" "$(dysk --color no -c free+mp+use+size 2>&1 || df -h)" ;;
+    3) notify-send -t 60000 "Disks" "$(dysk -c free+mp+use+size 2>&1 || df -h)" ;;
     4) INDEX=$(( (INDEX + 1) % N ))          ; echo "$INDEX $FORMAT" > "$DISKS_FILE" ;;
     5) INDEX=$(( (INDEX + N - 1) % N ))      ; echo "$INDEX $FORMAT" > "$DISKS_FILE" ;;
     6) setsid -f "${TERMINAL:-alacritty}" -e "${EDITOR:-vim}" "$0" >/dev/null 2>&1 ;;

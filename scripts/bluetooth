@@ -1,0 +1,144 @@
+#!/bin/bash
+#
+# File: bluetooth_selector.sh
+# Description: quick bluetooth menu (bluez/bluetoothctl) with rofi or peco
+#
+# make sure bluetoothd is running
+# rc-update add bluetoothd default && rc-service bluetoothd start
+
+usage() {
+echo "
+USAGE: ./bluetooth_selector.sh [OPTIONS]
+  Quick bluetooth menu using bluetoothctl and your choice of rofi or peco
+
+OPTIONS:
+  -r	rofi, depends on X (-d still works as an alias)
+  -p	peco, works in a tty
+"
+exit 1
+}
+
+[ $# -eq 0 ] && usage
+
+# selector <prompt>: reads choices on stdin, prints the pick on stdout
+case $1 in
+	-r|-d) selector() {
+	        rofi -dmenu -i -matching fuzzy -p "$1" \
+	            -theme-str 'listview {lines: 10;}'
+	    }
+	    ;;
+	-p) selector() { peco --initial-index 0 --prompt "$1"; }
+	    ;;
+	*)  usage
+	    ;;
+esac
+
+MAC_RE='[0-9A-F]{2}(:[0-9A-F]{2}){5}'
+
+# pull the MAC out of a "... [AA:BB:CC:DD:EE:FF]" menu line
+get_mac() {
+    printf '%s\n' "$1" | grep -oE "$MAC_RE" | tail -n 1
+}
+
+powered() {
+    [[ "$(bluetoothctl show | awk '/Powered:/ {print $2}')" == "yes" ]]
+}
+
+# print "● Name  [MAC]" / "○ Name  [MAC]" for every paired device
+paired_menu() {
+    local connected line mac name
+    connected=$(bluetoothctl devices Connected)
+    bluetoothctl devices Paired | while read -r _ mac name; do
+        if printf '%s\n' "$connected" | grep -q "$mac"; then
+            printf '● %s  [%s]\n' "$name" "$mac"
+        else
+            printf '○ %s  [%s]\n' "$name" "$mac"
+        fi
+    done
+}
+
+toggle_connection() {
+    local mac=$1 name=$2 state=$3
+    if [[ "$state" == "connected" ]]; then
+        bluetoothctl disconnect "$mac" >/dev/null \
+            && notify-send "disconnected from $name" \
+            || notify-send "failed to disconnect $name"
+    else
+        notify-send "connecting to $name..."
+        timeout 20 bluetoothctl connect "$mac" >/dev/null \
+            && notify-send "connected to $name" \
+            || notify-send "failed to connect to $name"
+    fi
+}
+
+scan_and_pair() {
+    local paired found pick mac name
+    notify-send "scanning for bluetooth devices..."
+    bluetoothctl --timeout 8 scan on >/dev/null 2>&1
+    paired=$(bluetoothctl devices Paired | grep -oE "$MAC_RE")
+    # skip already-paired devices and unnamed ones (name is just the MAC)
+    found=$(bluetoothctl devices | while read -r _ mac name; do
+        printf '%s\n' "$paired" | grep -q "$mac" && continue
+        [[ "${name//-/:}" == "$mac" ]] && continue
+        printf '%s  [%s]\n' "$name" "$mac"
+    done)
+    [ -z "$found" ] && { notify-send "no new bluetooth devices found"; exit 1; }
+
+    pick=$(printf '%s\n' "$found" | selector "Pair with")
+    [ -z "$pick" ] && exit 1
+    mac=$(get_mac "$pick")
+    name=${pick%  \[*}
+
+    notify-send "pairing with $name..."
+    bluetoothctl pairable on >/dev/null
+    if timeout 30 bluetoothctl pair "$mac" >/dev/null; then
+        bluetoothctl trust "$mac" >/dev/null
+        timeout 20 bluetoothctl connect "$mac" >/dev/null \
+            && notify-send "paired and connected to $name" \
+            || notify-send "paired with $name, but connecting failed"
+    else
+        notify-send "failed to pair with $name"
+        exit 1
+    fi
+}
+
+forget_device() {
+    local mac=$1 name=$2
+    bluetoothctl remove "$mac" >/dev/null \
+        && notify-send "removed $name" \
+        || notify-send "failed to remove $name"
+}
+
+main() {
+    local menu pick mac name state action
+    if ! powered; then
+        pick=$(printf 'power on\nexit\n' | selector "Bluetooth is off")
+        [[ "$pick" == "power on" ]] \
+            && bluetoothctl power on >/dev/null && notify-send "bluetooth on"
+        exit 0
+    fi
+
+    menu=$(printf '%s\n' "power off" "scan for new devices"; paired_menu; printf 'exit\n')
+    pick=$(printf '%s\n' "$menu" | selector "Bluetooth")
+
+    case "$pick" in
+        ""|exit) exit 1 ;;
+        "power off") bluetoothctl power off >/dev/null && notify-send "bluetooth off" ;;
+        "scan for new devices") scan_and_pair ;;
+        *)
+            mac=$(get_mac "$pick")
+            [ -z "$mac" ] && exit 1
+            # strip the leading marker by glob, not by offset (safe in any locale)
+            [[ "$pick" == "●"* ]] && state=connected || state=disconnected
+            name=${pick#* }; name=${name%  \[*}
+            action=$(printf 'connect / disconnect\nforget device\nback\n' | selector "$name")
+            case "$action" in
+                "connect / disconnect") toggle_connection "$mac" "$name" "$state" ;;
+                "forget device") forget_device "$mac" "$name" ;;
+                back) main ;;
+            esac
+            ;;
+    esac
+}
+
+main

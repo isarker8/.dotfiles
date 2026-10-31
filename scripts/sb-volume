@@ -27,8 +27,16 @@ esac
 vol_info=$(wpctl get-volume "$SINK")
 vol=$(echo "$vol_info" | awk '{print int($2 * 100)"%"}')
 
+# Pick an icon from the default sink's node name
+sink_name=$(wpctl inspect "$SINK" | awk -F'"' '/node.name/ {print $2; exit}')
+case "$sink_name" in
+    bluez_output.*) icon="󰋋" ;;   # bluetooth headphones/speaker
+    *hdmi*)         icon="󰍹" ;;   # monitor / HDMI audio
+    *)              icon="󰕾" ;;   # built-in speakers
+esac
+
 if echo "$vol_info" | grep -q "\[MUTED\]"; then
-    echo "󰝟 "
+    echo "󰝟"
 else
-    echo "󰕾 $vol"
+    echo "$icon $vol"
 fi
