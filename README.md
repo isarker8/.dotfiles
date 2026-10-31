@@ -30,7 +30,7 @@ Personal configuration files managed with [GNU Stow](https://www.gnu.org/softwar
 
 ```bash
 sudo pacman -S alacritty dunst mpv picom redshift python-pywal rofi yazi yt-dlp
-# dwm is built from source — see suckless.org or your own fork/patches
+# dwm is built from source — ['my dwm build'](https://github.com/isarker8/dwm)
 # waterfox: available from the AUR (e.g. waterfox-bin)
 # prayer-times: install from its own repo/AUR package if applicable
 ```
