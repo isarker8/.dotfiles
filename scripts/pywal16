@@ -4,6 +4,16 @@
 ln -sf ~/.cache/wal/dunstrc ~/.config/dunst/dunstrc
 pkill dunst; setsid -f dunst
 
+# GTK3 / GTK4 colours (Thunar, pavucontrol, etc.)
+mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
+ln -sf ~/.cache/wal/gtk.css ~/.config/gtk-3.0/gtk.css
+ln -sf ~/.cache/wal/gtk.css ~/.config/gtk-4.0/gtk.css
+
+# Qt5 / Qt6 colours (via qt5ct / qt6ct)
+mkdir -p ~/.config/qt5ct/colors ~/.config/qt6ct/colors
+ln -sf ~/.cache/wal/qtct-colors.conf ~/.config/qt5ct/colors/wal.conf
+ln -sf ~/.cache/wal/qtct-colors.conf ~/.config/qt6ct/colors/wal.conf
+
 # Reload Xresources database with pywal colors
 ln -sf ~/.cache/wal/colors.Xresources ~/.Xresources
 xrdb -merge ~/.cache/wal/colors.Xresources
