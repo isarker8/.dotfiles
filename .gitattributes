@@ -2,3 +2,4 @@
 .config/prayer-times/config.toml filter=git-crypt diff=git-crypt
 .config/redshift/redshift.conf filter=git-crypt diff=git-crypt
 scripts/unlock filter=git-crypt diff=git-crypt
+start.html filter=git-crypt diff=git-crypt
