@@ -1,12 +1,12 @@
 # .dotfiles
 
-Personal configuration files managed with [GNU Stow](https://www.gnu.org/software/stow/), built around a minimal `dwm` + `rofi` desktop.
+Personal configuration files managed with [GNU Stow](https://www.gnu.org/software/stow/), built around a minimal [dwm](https://dwm.suckless.org/) + `rofi` desktop.
 
 ## Dependencies
 
 ### Core
 
-- [`dwm`](https://dwm.suckless.org/) — window manager
+- [`my dwm build`](https://github.com/isarker8/dwm) — window manager
 
 `dwm` is typically built from source with a local `config.h` and patches rather than installed from a package manager — clone, patch, `make`, `sudo make install`.
 
@@ -30,7 +30,7 @@ Personal configuration files managed with [GNU Stow](https://www.gnu.org/softwar
 
 ```bash
 sudo pacman -S alacritty dunst mpv picom redshift python-pywal rofi yazi yt-dlp
-# dwm is built from source — ['my dwm build'](https://github.com/isarker8/dwm)
+# dwm is built from source
 # waterfox: available from the AUR (e.g. waterfox-bin)
 # prayer-times: install from its own repo/AUR package if applicable
 ```
