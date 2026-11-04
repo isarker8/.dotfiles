@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-layout1="gb"
-name1="GB"
+layout1="us"
+name1="US"
 
 layout2="ara"
 name2="AR"

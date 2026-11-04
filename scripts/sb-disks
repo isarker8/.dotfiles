@@ -18,7 +18,7 @@ case $BLOCK_BUTTON in
     3) notify-send -t 60000 "Disks" "$(dysk -c free+mp+use+size 2>&1 || df -h)" ;;
     4) INDEX=$(( (INDEX + 1) % N ))          ; echo "$INDEX $FORMAT" > "$DISKS_FILE" ;;
     5) INDEX=$(( (INDEX + N - 1) % N ))      ; echo "$INDEX $FORMAT" > "$DISKS_FILE" ;;
-    6) setsid -f "${TERMINAL:-alacritty}" -e "${EDITOR:-vim}" "$0" >/dev/null 2>&1 ;;
+    6) setsid -f "${TERMINAL:-alacritty}" -e "${EDITOR:-nvim}" "$0" >/dev/null 2>&1 ;;
 esac
 
 CURRENT_DISK="${DISKS[$INDEX]}"

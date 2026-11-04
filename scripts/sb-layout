@@ -15,6 +15,9 @@ case "$(cat "$statefile" 2>/dev/null)" in
     ara)
         printf " 󱌨"
         ;;
+    us)
+        printf " "
+        ;;
     *)
         printf " ?"
         ;;

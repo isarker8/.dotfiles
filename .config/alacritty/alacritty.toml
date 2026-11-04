@@ -16,3 +16,7 @@ family = "JetBrainsMono Nerd Font Bold Italic"
 
 [window]
 opacity = 0.75
+
+[cursor.style]
+shape = "Beam"
+blinking = "Never"

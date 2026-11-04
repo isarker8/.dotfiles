@@ -29,9 +29,11 @@ Personal configuration files managed with [GNU Stow](https://www.gnu.org/softwar
 ### Arch Linux install
 
 ```bash
-sudo pacman -S alacritty dunst mpv picom redshift python-pywal rofi yazi yt-dlp
+sudo pacman -S alacritty dunst mpv picom redshift rofi yazi yt-dlp
 # dwm is built from source
 # waterfox: available from the AUR (e.g. waterfox-bin)
+# pywal: available from the AUR, but latest at: https://github.com/eylles/pywal16
+# rofi: available in pacman. if built from source you can build with x11/wayland support only
 # prayer-times: install from its own repo/AUR package if applicable
 ```
 
