@@ -5,8 +5,8 @@
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
 # Setting default programs
-export EDITOR="nvim"
-export VISUAL="nvim"
+export EDITOR="vim"
+export VISUAL="vim"
 export TERM="alacritty"
 export TERMINAL="alacritty"
 export BROWSER="waterfox"

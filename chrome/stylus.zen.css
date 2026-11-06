@@ -1,6 +1,7 @@
-*,
-*::before,
-*::after {
+body *:not([class*="icon"]):not([class*="fa"]):not([class*="material-icons"]):not([class*="glyph"]):not([class*="mdi"]):not(i):not(span[class*="icon"]) {
     font-family: "JetBrainsMono Nerd Font Propo", "Iosevka Nerd Font Propo", monospace !important;
+}
+
+*:not([class*="icon"]):not([class*="fa"]):not([class*="material-icons"]):not([class*="glyph"]) {
     border-radius: 0 !important;
 }

@@ -195,17 +195,22 @@ menu[_moz-menuactive="true"],
   scrollbar-width: thin;
 }
 
-/* ==========================================================
-   OPTIONAL: slim the rail and expand on hover.
-   Uncomment if you want a collapsed-by-default rail.
-   ========================================================== */
-/*
-#sidebar-main {
-  min-width: 48px !important;
-  max-width: 48px !important;
-  transition: max-width 150ms ease !important;
+/* ---------- URL bar search highlight & focus border ---------- */
+#urlbar[focused="true"] {
+  --urlbar-focus-box-shadow: 0 0 0 2px var(--wal-accent) !important;
 }
-#sidebar-main:hover {
-  max-width: 260px !important;
+
+#urlbar-background {
+  border-color: var(--color1) !important;
 }
-*/
+
+#urlbar[focused="true"] > #urlbar-background {
+  border-color: var(--wal-accent) !important;
+  box-shadow: none !important;
+}
+
+/* Text selection color inside the search bar */
+#urlbar-input::selection {
+  background-color: var(--wal-accent) !important;
+  color: var(--background) !important;
+}
