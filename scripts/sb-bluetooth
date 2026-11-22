@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Handle click events (works with dwmblocks BLOCK_BUTTON or direct clicks)
+case "$BLOCK_BUTTON" in
+    1) setsid -f bluetooth -r >/dev/null 2>&1 ;; # Left click opens your bluetooth menu
+esac
+
+# Output ON or OFF
+if bluetoothctl show 2>/dev/null | grep -q "Powered: yes"; then
+    echo "󰂯"
+else
+    echo "󰂲"
+fi

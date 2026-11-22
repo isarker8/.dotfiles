@@ -1,88 +1,124 @@
 #!/bin/bash
 #
-# n0
 # File: wifi_selector.sh
-# Description: quick wifi switcher (iwd) with rofi or peco
-#
-# make sure iwd is enabled
-# ln -s /etc/sv/dbus /var/service/
-# ln -s /etc/sv/iwd /var/service/
-#
-# and typically dhcpcd 
-# ln -s /etc/sv/dhcpcd /var/service/dhcpcd
-# a110w 
+# Description: Quick Wi-Fi menu using NetworkManager (nmcli) and rofi
 
 usage() {
-echo "
-USAGE: ./wifi_selector.sh [OPTIONS]
-  Quick wifi menu using iwd and your choice of rofi or peco
-
-OPTIONS:
-  -r	rofi, depends on X (-d still works as an alias)
-  -p	peco, works in a tty
-"
-exit 1
+    echo "USAGE: $(basename "$0") -r"
+    exit 1
 }
 
-[ $# -eq 0 ] && usage
-
-# selector <prompt>: reads choices on stdin, prints the pick on stdout
-case $1 in
-	-r|-d) selector() {
-	        rofi -dmenu -i -matching fuzzy -p "$1" \
-	            -theme-str 'listview {lines: 10;}'
-	    }
-	    ;;
-	-p) selector() { peco --initial-index 2 --prompt "$1"; }
-	    ;;
-	*)  usage
-	    ;;
+case "$1" in
+    -r|-d)
+        selector() {
+            rofi -dmenu -i -matching fuzzy -p "$1" \
+                -theme-str 'listview {lines: 10;}'
+        }
+        ;;
+    *)
+        usage
+        ;;
 esac
 
-iwctlstrip() {
-  tail -n +3 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+wifi_enabled() {
+    [[ "$(nmcli radio wifi)" == "enabled" ]]
 }
 
-get_interface() {
-    INTFC=$(iwctl device list | iwctlstrip | selector "Select an interface" | awk '{print $1}') 
+scan_networks() {
+    notify-send "Scanning for Wi-Fi networks..."
+    nmcli device wifi rescan >/dev/null 2>&1
 }
 
-scan() {
-    iwctl station $INTFC scan && sleep 1
-    SCAN_RESULTS=$(iwctl station $INTFC get-networks | iwctlstrip)
+list_networks() {
+    # Formats as: "● SSID  [SIGNAL% | SECURITY]" or "○ SSID  [SIGNAL% | SECURITY]"
+    nmcli -t -f IN-USE,SSID,SIGNAL,SECURITY device wifi list | awk -F: '
+        $2 != "" && !seen[$2]++ {
+            marker = ($1 == "*") ? "●" : "○"
+            sec = ($4 == "") ? "OPEN" : $4
+            printf "%s %s  [%s%% | %s]\n", marker, $2, $3, sec
+        }
+    '
 }
 
-get_ssid() {
-    CHOSEN=$(printf "$SCAN_RESULTS" | selector "Choose a network")
-    SSID=$(printf "$CHOSEN" | awk -F" {2,}" '{print $2}' | sed 's/>//' | awk '{$1=$1;print}')
-    [[ "$(printf "$CHOSEN" | awk -F" {2,}" '{print $3}')" == "psk" ]] && PSK=1 || PSK=0
-    [[ "$(printf "$CHOSEN" | awk -F" {2,}" '{print $3}')" == "open" ]] && OPEN=1 || OPEN=0
-    [[ "$CHOSEN" == "rescan" ]] && {
-        scan
-        get_ssid
-    }; [[ "$CHOSEN" == "exit" ]] && exit 1 
+connect_network() {
+    local ssid="$1" sec="$2" pass
+
+    # If NetworkManager already has a saved profile for this SSID, connect directly
+    if nmcli -t -f NAME connection show | grep -Fxq "$ssid"; then
+        notify-send "Connecting to $ssid..."
+        if nmcli connection up id "$ssid" >/dev/null 2>&1; then
+            notify-send "Connected to $ssid"
+            return 0
+        fi
+    fi
+
+    if [[ "$sec" == "OPEN" ]]; then
+        notify-send "Connecting to $ssid..."
+        nmcli device wifi connect "$ssid" >/dev/null 2>&1 \
+            && notify-send "Connected to $ssid" \
+            || notify-send "Failed to connect to $ssid"
+    else
+        pass=$(printf 'exit\n' | selector "Password for $ssid")
+        [[ -z "$pass" || "$pass" == "exit" ]] && exit 0
+        notify-send "Connecting to $ssid..."
+        nmcli device wifi connect "$ssid" password "$pass" >/dev/null 2>&1 \
+            && notify-send "Connected to $ssid" \
+            || notify-send "Failed to connect to $ssid"
+    fi
 }
 
-get_psk() {
-    PSK=$(printf 'exit\n' | selector "Enter WPA/WPA2 Secret Passphrase" | awk '{print}')
+main() {
+    local menu pick ssid sec action
+
+    if ! wifi_enabled; then
+        pick=$(printf 'turn wifi on\nexit\n' | selector "Wi-Fi is off")
+        if [[ "$pick" == "turn wifi on" ]]; then
+            nmcli radio wifi on && notify-send "Wi-Fi enabled"
+        fi
+        exit 0
+    fi
+
+    menu=$(printf '%s\n' "turn wifi off" "rescan"; list_networks; printf 'exit\n')
+    pick=$(printf '%s\n' "$menu" | selector "Wi-Fi")
+
+    case "$pick" in
+        ""|exit)
+            exit 0
+            ;;
+        "turn wifi off")
+            nmcli radio wifi off && notify-send "Wi-Fi disabled"
+            ;;
+        "rescan")
+            scan_networks
+            main
+            ;;
+        *)
+            # Extract SSID and security from "● SSID  [85% | WPA2]"
+            ssid="${pick#* }"
+            ssid="${ssid%  \[*}"
+            sec="${pick##*| }"
+            sec="${sec%\]}"
+
+            if [[ "$pick" == "●"* ]]; then
+                action=$(printf 'disconnect\nforget network\nback\n' | selector "$ssid")
+                case "$action" in
+                    "disconnect")
+                        nmcli connection down id "$ssid" >/dev/null 2>&1 \
+                            && notify-send "Disconnected from $ssid"
+                        ;;
+                    "forget network")
+                        nmcli connection delete id "$ssid" >/dev/null 2>&1 \
+                            && notify-send "Forgot $ssid"
+                        ;;
+                    "back")
+                        main
+                        ;;
+                esac
+            else
+                connect_network "$ssid" "$sec"
+            fi
+            ;;
+    esac
 }
 
-connect_with_open() {
-    iwctl station $INTFC connect "$SSID" 
-}
-
-connect_with_psk() {
-    get_psk || exit 1
-    iwctl station $INTFC connect "$SSID" -P "$PSK"
-}
-
-connect_to_a_network() {
-    get_interface && scan && get_ssid
-    [[ "$PSK" == "1" ]] && connect_with_psk && notify-send "connected to $SSID"
-    [[ "$OPEN" == "1" ]] && connect_with_open && notify-send "connected to $SSID"
-
-}
-
-
-connect_to_a_network
-
+main

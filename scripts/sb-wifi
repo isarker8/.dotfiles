@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Handle click events (works with dwmblocks BLOCK_BUTTON or direct clicks)
+case "$BLOCK_BUTTON" in
+    1) setsid -f wifi -r >/dev/null 2>&1 ;; # Left click opens your wifi menu
+esac
+
+# Output SSID + signal %, or DOWN
+nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | awk -F: '
+    $1 == "yes" { printf "󰖩 %s (%s%%)\n", $2, $3; found=1; exit }
+    END { if (!found) print "󰖪 DOWN" }
+'

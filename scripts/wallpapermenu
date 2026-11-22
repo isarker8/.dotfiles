@@ -2,22 +2,23 @@
 
 # wallpaper picker menu for use with pywal - shows a thumbnail grid in rofi
 
-FOLDER=~/Pictures/wallpapers # wallpaper folder
+FOLDER=~/Pictures/wallpapers/ # wallpaper folder
 SCRIPT=~/.dotfiles/scripts/pywal16 # script to run after wal for refreshing programs, etc.
 
 menu () {
-	# collect images (case-insensitive extensions, sorted)
-	shopt -s nullglob nocaseglob
-	local files=("$FOLDER"/*.{jpg,jpeg,png,webp,gif,bmp})
-	shopt -u nullglob nocaseglob
+	# collect images from all subdirectories
+	# we use mapfile to put the find results into an array
+	local files=()
+	mapfile -t files < <(find "$FOLDER" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.gif" -o -iname "*.bmp" \) | sort)
 
 	[ "${#files[@]}" -gt 0 ] || { notify-send "No wallpapers found in $FOLDER"; exit 1; }
 
 	# each row: label \0 icon \x1f path  -> rofi draws the image as the icon
 	local idx
 	idx=$(
-		for f in "${files[@]}"; do
-			printf '%s\0icon\x1f%s\n' "${f##*/}" "$f"
+		for i in "${!files[@]}"; do
+			# ${files[$i]##*/} gets just the filename without the path for the label
+			printf '%s\0icon\x1f%s\n' "${files[$i]##*/}" "${files[$i]}"
 		done | rofi -dmenu -i -show-icons -format i -p "Wallpaper" \
 			-theme-str '
 				window   {width: 60%;}
@@ -33,6 +34,7 @@ menu () {
 
 	wal -i "${files[$idx]}" -o "$SCRIPT"
 }
+
 
 # If given arguments:
 # First argument will be used by pywal as wallpaper/dir path

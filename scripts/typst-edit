@@ -1,0 +1,3 @@
+#!/bin/bash
+TYPST_DIR="$HOME/typst"
+alacritty --class TypstVim -e vim "$TYPST_DIR"
