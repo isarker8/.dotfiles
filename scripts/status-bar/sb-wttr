@@ -1,6 +1,8 @@
 #!/bin/sh
 
-LOCATION="${LOC:-${LAT},${LON}}"
+. "$HOME/.local/share/private/location.env"
+
+LOCATION="${LOCATION:-${LAT},${LON}}"
 CACHE_FILE="/tmp/sb-wttr"
 MAX_AGE=1800 # Refresh every 30 minutes (1800 seconds)
 

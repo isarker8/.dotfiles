@@ -17,14 +17,14 @@ xrandr -s 1920x1080 &
 pipewire &
 wireplumber &
 pipewire-pulse &
-redshift &
+redshift-private &
 wal -R &
 xbindkeys &
 xrdb -merge ~/.Xresources &
 clipmenud &
 dwmblocks &
 dunst &
-prayer-times daemon &
+prayer-times-private &
 export CM_LAUNCHER=rofi
 
 exec dwm
