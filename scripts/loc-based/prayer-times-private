@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -eu
+
+. "$HOME/.local/share/private/location.env"
+
+exec prayer-times \
+    --latitude "$LAT" \
+    --longitude "$LON" \
+    --no-geolocation \
+    "$@"

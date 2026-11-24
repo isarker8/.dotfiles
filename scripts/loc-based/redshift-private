@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -eu
+
+. "$HOME/.local/share/private/location.env"
+
+exec redshift -l "${LAT}:${LON}" "$@"
