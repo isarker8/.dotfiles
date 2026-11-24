@@ -8,5 +8,5 @@ esac
 # Output SSID + signal %, or DOWN
 nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | awk -F: '
     $1 == "yes" { printf "󰖩 %s (%s%%)\n", $2, $3; found=1; exit }
-    END { if (!found) print "󰖪 DOWN" }
+    END { if (!found) print "󰖪" }
 '

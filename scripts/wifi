@@ -3,6 +3,10 @@
 # File: wifi_selector.sh
 # Description: Quick Wi-Fi menu using NetworkManager (nmcli) and rofi
 
+refresh() {
+    kill -37 "$(pidof dwmblocks)" 2>/dev/null
+}
+
 usage() {
     echo "USAGE: $(basename "$0") -r"
     exit 1
@@ -30,7 +34,6 @@ scan_networks() {
 }
 
 list_networks() {
-    # Formats as: "● SSID  [SIGNAL% | SECURITY]" or "○ SSID  [SIGNAL% | SECURITY]"
     nmcli -t -f IN-USE,SSID,SIGNAL,SECURITY device wifi list | awk -F: '
         $2 != "" && !seen[$2]++ {
             marker = ($1 == "*") ? "●" : "○"
@@ -48,22 +51,29 @@ connect_network() {
         notify-send "Connecting to $ssid..."
         if nmcli connection up id "$ssid" >/dev/null 2>&1; then
             notify-send "Connected to $ssid"
+            refresh
             return 0
         fi
     fi
 
     if [[ "$sec" == "OPEN" ]]; then
         notify-send "Connecting to $ssid..."
-        nmcli device wifi connect "$ssid" >/dev/null 2>&1 \
-            && notify-send "Connected to $ssid" \
-            || notify-send "Failed to connect to $ssid"
+        if nmcli device wifi connect "$ssid" >/dev/null 2>&1; then
+            notify-send "Connected to $ssid"
+            refresh
+        else
+            notify-send "Failed to connect to $ssid"
+        fi
     else
         pass=$(printf 'exit\n' | selector "Password for $ssid")
         [[ -z "$pass" || "$pass" == "exit" ]] && exit 0
         notify-send "Connecting to $ssid..."
-        nmcli device wifi connect "$ssid" password "$pass" >/dev/null 2>&1 \
-            && notify-send "Connected to $ssid" \
-            || notify-send "Failed to connect to $ssid"
+        if nmcli device wifi connect "$ssid" password "$pass" >/dev/null 2>&1; then
+            notify-send "Connected to $ssid"
+            refresh
+        else
+            notify-send "Failed to connect to $ssid"
+        fi
     fi
 }
 
@@ -74,6 +84,7 @@ main() {
         pick=$(printf 'turn wifi on\nexit\n' | selector "Wi-Fi is off")
         if [[ "$pick" == "turn wifi on" ]]; then
             nmcli radio wifi on && notify-send "Wi-Fi enabled"
+            refresh
         fi
         exit 0
     fi
@@ -87,6 +98,7 @@ main() {
             ;;
         "turn wifi off")
             nmcli radio wifi off && notify-send "Wi-Fi disabled"
+            refresh
             ;;
         "rescan")
             scan_networks
@@ -103,12 +115,16 @@ main() {
                 action=$(printf 'disconnect\nforget network\nback\n' | selector "$ssid")
                 case "$action" in
                     "disconnect")
-                        nmcli connection down id "$ssid" >/dev/null 2>&1 \
-                            && notify-send "Disconnected from $ssid"
+                        if nmcli connection down id "$ssid" >/dev/null 2>&1; then
+                            notify-send "Disconnected from $ssid"
+                            refresh
+                        fi
                         ;;
                     "forget network")
-                        nmcli connection delete id "$ssid" >/dev/null 2>&1 \
-                            && notify-send "Forgot $ssid"
+                        if nmcli connection delete id "$ssid" >/dev/null 2>&1; then
+                            notify-send "Forgot $ssid"
+                            refresh
+                        fi
                         ;;
                     "back")
                         main

@@ -62,6 +62,34 @@ local bar_font = "Iosevka Nerd Font Propo:style=Bold:size=11"
 local blocks = {
     oxwm.bar.block.shell({
         format = "{}",
+        command = "sb-mpd",
+        interval = 2,
+        color = colors.light_blue,
+        underline = true,
+        click = "mpc toggle",
+    }),
+    oxwm.bar.block.static({
+        text = "│",
+        interval = 999999999,
+        color = colors.lavender,
+        underline = false,
+    }),
+    oxwm.bar.block.shell({
+        format = "{}",
+        command = "sb-wttr",
+        interval = 600,
+        color = colors.light_blue,
+        underline = true,
+        click = "alacritty -e sh -c \"curl -s 'wttr.in' | less -R\"",
+    }),
+    oxwm.bar.block.static({
+        text = "│",
+        interval = 999999999,
+        color = colors.lavender,
+        underline = false,
+    }),
+    oxwm.bar.block.shell({
+        format = "{}",
         command = "sb-systemstats",
         interval = 5,
         color = colors.light_blue,
@@ -80,7 +108,7 @@ local blocks = {
         interval = 5,
         color = colors.light_blue,
         underline = true,
-        click = { command = 'notify-send -t 60000 "Disks" "$(dysk -c free+mp+use+size 2>&1 || df -h)"', },
+        click = 'notify-send -t 60000 "Disks" "$(dysk -c free+mp+use+size 2>&1 || df -h)"',
     }),
     oxwm.bar.block.static({
         text = "│",
@@ -94,7 +122,9 @@ local blocks = {
         interval = 1,
         color = colors.light_blue,
         underline = true,
-        click = { command = 'wpctl set-mute "@DEFAULT_AUDIO_SINK@" toggle', },
+        click = "pavucontrol",
+       -- scroll_up = 'wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+', 
+       -- scroll_down = 'wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%-', 
     }),
     oxwm.bar.block.static({
         text = "│",
@@ -106,7 +136,7 @@ local blocks = {
         format = "{}",
         command = "sb-wifi",
         interval = 5,
-        color = colors.green,
+        color = colors.blue,
         underline = true,
         click = "wifi -r",
     }),
@@ -145,32 +175,32 @@ local blocks = {
     --}),
     oxwm.bar.block.datetime({
         format = "{}",
-        date_format = "%a, %b %d - %-I:%M %P",
+        date_format = "%a %d %b - %-H:%M",
         interval = 1,
         color = colors.cyan,
         underline = true,
     }),
-    oxwm.bar.block.static({
-        text = "│",
-        interval = 999999999,
-        color = colors.lavender,
-        underline = false,
-    }),
-    oxwm.bar.block.systray({
-    }),
+    --oxwm.bar.block.static({
+    --    text = "│",
+    --    interval = 999999999,
+    --    color = colors.lavender,
+    --    underline = false,
+    --}),
+    --oxwm.bar.block.systray({
+    --}),
     -- Uncomment to add battery status (useful for laptops)
---    oxwm.bar.block.battery({
---        format = "Bat: {}%",
---        charging = "⚡ Bat: {}%",
---        discharging = "- Bat: {}%",
---        full = "✓ Bat: {}%",
---        interval = 30,
---        color = colors.green,
---        underline = true,
+    oxwm.bar.block.battery({
+        format = "Bat: {}%",
+        charging = "⚡ Bat: {}%",
+        discharging = "- Bat: {}%",
+        full = "✓ Bat: {}%",
+        interval = 30,
+        color = colors.green,
+        underline = true,
         -- click: run a command when the block is clicked
         -- click = "alacritty -e btop",
         -- click = { command = "bluetui", floating = true },
-    --}),
+    }),
 };
 
 -------------------------------------------------------------------------------
@@ -179,6 +209,7 @@ local blocks = {
 oxwm.set_terminal(terminal)
 oxwm.set_modkey(modkey) -- This is for Mod + mouse binds, such as drag/resize
 oxwm.set_tags(tags)
+oxwm.bar.set_hide_vacant_tags(true)
 
 -- Set default layout (tiling by default)
 oxwm.set_layout("tiling")

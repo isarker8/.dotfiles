@@ -6,6 +6,10 @@
 # make sure bluetoothd is running
 # rc-update add bluetoothd default && rc-service bluetoothd start
 
+refresh() {
+    kill -40 "$(pidof dwmblocks)" 2>/dev/null
+}
+
 usage() {
 echo "
 USAGE: ./bluetooth_selector.sh [OPTIONS]
@@ -60,14 +64,20 @@ paired_menu() {
 toggle_connection() {
     local mac=$1 name=$2 state=$3
     if [[ "$state" == "connected" ]]; then
-        bluetoothctl disconnect "$mac" >/dev/null \
-            && notify-send "disconnected from $name" \
-            || notify-send "failed to disconnect $name"
+        if bluetoothctl disconnect "$mac" >/dev/null; then
+            notify-send "disconnected from $name"
+            refresh
+        else
+            notify-send "failed to disconnect $name"
+        fi
     else
         notify-send "connecting to $name..."
-        timeout 20 bluetoothctl connect "$mac" >/dev/null \
-            && notify-send "connected to $name" \
-            || notify-send "failed to connect to $name"
+        if timeout 20 bluetoothctl connect "$mac" >/dev/null; then
+            notify-send "connected to $name"
+            refresh
+        else
+            notify-send "failed to connect to $name"
+        fi
     fi
 }
 
@@ -93,9 +103,12 @@ scan_and_pair() {
     bluetoothctl pairable on >/dev/null
     if timeout 30 bluetoothctl pair "$mac" >/dev/null; then
         bluetoothctl trust "$mac" >/dev/null
-        timeout 20 bluetoothctl connect "$mac" >/dev/null \
-            && notify-send "paired and connected to $name" \
-            || notify-send "paired with $name, but connecting failed"
+        if timeout 20 bluetoothctl connect "$mac" >/dev/null; then
+            notify-send "paired and connected to $name"
+        else
+            notify-send "paired with $name, but connecting failed"
+        fi
+        refresh
     else
         notify-send "failed to pair with $name"
         exit 1
@@ -104,17 +117,22 @@ scan_and_pair() {
 
 forget_device() {
     local mac=$1 name=$2
-    bluetoothctl remove "$mac" >/dev/null \
-        && notify-send "removed $name" \
-        || notify-send "failed to remove $name"
+    if bluetoothctl remove "$mac" >/dev/null; then
+        notify-send "removed $name"
+        refresh
+    else
+        notify-send "failed to remove $name"
+    fi
 }
 
 main() {
     local menu pick mac name state action
     if ! powered; then
         pick=$(printf 'power on\nexit\n' | selector "Bluetooth is off")
-        [[ "$pick" == "power on" ]] \
-            && bluetoothctl power on >/dev/null && notify-send "bluetooth on"
+        if [[ "$pick" == "power on" ]]; then
+            bluetoothctl power on >/dev/null && notify-send "bluetooth on"
+            refresh
+        fi
         exit 0
     fi
 
@@ -123,7 +141,10 @@ main() {
 
     case "$pick" in
         ""|exit) exit 1 ;;
-        "power off") bluetoothctl power off >/dev/null && notify-send "bluetooth off" ;;
+        "power off")
+            bluetoothctl power off >/dev/null && notify-send "bluetooth off"
+            refresh
+            ;;
         "scan for new devices") scan_and_pair ;;
         *)
             mac=$(get_mac "$pick")

@@ -1,6 +1,6 @@
 configuration{
     modi: ["drun", "window", "run"];
-    icon-theme: "Papirus-Dark";
+    icon-theme: "TokyoNight-SE";
     show-icons: true;
     terminal: "alacritty";
     drun-display-format: "{icon} {name}";

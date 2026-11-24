@@ -27,4 +27,4 @@ dunst &
 prayer-times daemon &
 export CM_LAUNCHER=rofi
 
-exec oxwm
+exec dwm
